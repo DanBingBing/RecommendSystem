@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.movie.dao.MovieAspectMapper">
+  <resultMap id="BaseResultMap" type="com.movie.pojo.MovieAspect">
+    <id column="ma_id" jdbcType="INTEGER" property="maId" />
+    <result column="ma_name" jdbcType="VARCHAR" property="maName" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    ma_id, ma_name
+  </sql>
+  <select id="selectByExample" parameterType="com.movie.pojo.MovieAspectExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from mov_aspect
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from mov_aspect
+    where ma_id = #{maId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from mov_aspect
+    where ma_id = #{maId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.movie.pojo.MovieAspectExample">
+    delete from mov_aspect
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.movie.pojo.MovieAspect">
+    insert into mov_aspect (ma_id, ma_name)
+    values (#{maId,jdbcType=INTEGER}, #{maName,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.movie.pojo.MovieAspect">
+    insert into mov_aspect
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="maId != null">
+        ma_id,
+      </if>
+      <if test="maName != null">
+        ma_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="maId != null">
+        #{maId,jdbcType=INTEGER},
+      </if>
+      <if test="maName != null">
+        #{maName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.movie.pojo.MovieAspectExample" resultType="java.lang.Long">
+    select count(*) from mov_aspect
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update mov_aspect
+    <set>
+      <if test="record.maId != null">
+        ma_id = #{record.maId,jdbcType=INTEGER},
+      </if>
+      <if test="record.maName != null">
+        ma_name = #{record.maName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update mov_aspect
+    set ma_id = #{record.maId,jdbcType=INTEGER},
+      ma_name = #{record.maName,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.movie.pojo.MovieAspect">
+    update mov_aspect
+    <set>
+      <if test="maName != null">
+        ma_name = #{maName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ma_id = #{maId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.movie.pojo.MovieAspect">
+    update mov_aspect
+    set ma_name = #{maName,jdbcType=VARCHAR}
+    where ma_id = #{maId,jdbcType=INTEGER}
+  </update>
+</mapper>

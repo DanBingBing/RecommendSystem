@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.movie.dao.MoviePerformerMessageMapper">
+  <resultMap id="BaseResultMap" type="com.movie.pojo.MoviePerformerMessage">
+    <id column="mpm_id" jdbcType="INTEGER" property="mpmId" />
+    <result column="mov_id" jdbcType="INTEGER" property="movId" />
+    <result column="per_id" jdbcType="INTEGER" property="perId" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    mpm_id, mov_id, per_id
+  </sql>
+  <select id="selectByExample" parameterType="com.movie.pojo.MoviePerformerMessageExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from mov_performer_mov
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from mov_performer_mov
+    where mpm_id = #{mpmId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from mov_performer_mov
+    where mpm_id = #{mpmId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.movie.pojo.MoviePerformerMessageExample">
+    delete from mov_performer_mov
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.movie.pojo.MoviePerformerMessage">
+    insert into mov_performer_mov (mpm_id, mov_id, per_id
+      )
+    values (#{mpmId,jdbcType=INTEGER}, #{movId,jdbcType=INTEGER}, #{perId,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.movie.pojo.MoviePerformerMessage">
+    insert into mov_performer_mov
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="mpmId != null">
+        mpm_id,
+      </if>
+      <if test="movId != null">
+        mov_id,
+      </if>
+      <if test="perId != null">
+        per_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="mpmId != null">
+        #{mpmId,jdbcType=INTEGER},
+      </if>
+      <if test="movId != null">
+        #{movId,jdbcType=INTEGER},
+      </if>
+      <if test="perId != null">
+        #{perId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.movie.pojo.MoviePerformerMessageExample" resultType="java.lang.Long">
+    select count(*) from mov_performer_mov
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update mov_performer_mov
+    <set>
+      <if test="record.mpmId != null">
+        mpm_id = #{record.mpmId,jdbcType=INTEGER},
+      </if>
+      <if test="record.movId != null">
+        mov_id = #{record.movId,jdbcType=INTEGER},
+      </if>
+      <if test="record.perId != null">
+        per_id = #{record.perId,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update mov_performer_mov
+    set mpm_id = #{record.mpmId,jdbcType=INTEGER},
+      mov_id = #{record.movId,jdbcType=INTEGER},
+      per_id = #{record.perId,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.movie.pojo.MoviePerformerMessage">
+    update mov_performer_mov
+    <set>
+      <if test="movId != null">
+        mov_id = #{movId,jdbcType=INTEGER},
+      </if>
+      <if test="perId != null">
+        per_id = #{perId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where mpm_id = #{mpmId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.movie.pojo.MoviePerformerMessage">
+    update mov_performer_mov
+    set mov_id = #{movId,jdbcType=INTEGER},
+      per_id = #{perId,jdbcType=INTEGER}
+    where mpm_id = #{mpmId,jdbcType=INTEGER}
+  </update>
+</mapper>

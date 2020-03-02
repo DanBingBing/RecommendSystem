@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.movie.dao.MovieTagMapper">
+  <resultMap id="BaseResultMap" type="com.movie.pojo.MovieTag">
+    <id column="mt_id" jdbcType="INTEGER" property="mtId" />
+    <result column="asp_id" jdbcType="INTEGER" property="aspId" />
+    <result column="mt_name" jdbcType="VARCHAR" property="mtName" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    mt_id, asp_id, mt_name
+  </sql>
+  <select id="selectByExample" parameterType="com.movie.pojo.MovieTagExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from mov_tag
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from mov_tag
+    where mt_id = #{mtId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from mov_tag
+    where mt_id = #{mtId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.movie.pojo.MovieTagExample">
+    delete from mov_tag
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.movie.pojo.MovieTag">
+    insert into mov_tag (mt_id, asp_id, mt_name
+      )
+    values (#{mtId,jdbcType=INTEGER}, #{aspId,jdbcType=INTEGER}, #{mtName,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.movie.pojo.MovieTag">
+    insert into mov_tag
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="mtId != null">
+        mt_id,
+      </if>
+      <if test="aspId != null">
+        asp_id,
+      </if>
+      <if test="mtName != null">
+        mt_name,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="mtId != null">
+        #{mtId,jdbcType=INTEGER},
+      </if>
+      <if test="aspId != null">
+        #{aspId,jdbcType=INTEGER},
+      </if>
+      <if test="mtName != null">
+        #{mtName,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.movie.pojo.MovieTagExample" resultType="java.lang.Long">
+    select count(*) from mov_tag
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update mov_tag
+    <set>
+      <if test="record.mtId != null">
+        mt_id = #{record.mtId,jdbcType=INTEGER},
+      </if>
+      <if test="record.aspId != null">
+        asp_id = #{record.aspId,jdbcType=INTEGER},
+      </if>
+      <if test="record.mtName != null">
+        mt_name = #{record.mtName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update mov_tag
+    set mt_id = #{record.mtId,jdbcType=INTEGER},
+      asp_id = #{record.aspId,jdbcType=INTEGER},
+      mt_name = #{record.mtName,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.movie.pojo.MovieTag">
+    update mov_tag
+    <set>
+      <if test="aspId != null">
+        asp_id = #{aspId,jdbcType=INTEGER},
+      </if>
+      <if test="mtName != null">
+        mt_name = #{mtName,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where mt_id = #{mtId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.movie.pojo.MovieTag">
+    update mov_tag
+    set asp_id = #{aspId,jdbcType=INTEGER},
+      mt_name = #{mtName,jdbcType=VARCHAR}
+    where mt_id = #{mtId,jdbcType=INTEGER}
+  </update>
+</mapper>

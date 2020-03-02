@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.movie.dao.MovieTagMessageMapper">
+  <resultMap id="BaseResultMap" type="com.movie.pojo.MovieTagMessage">
+    <id column="mtm_id" jdbcType="INTEGER" property="mtmId" />
+    <result column="mov_id" jdbcType="INTEGER" property="movId" />
+    <result column="tag_id" jdbcType="INTEGER" property="tagId" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    mtm_id, mov_id, tag_id
+  </sql>
+  <select id="selectByExample" parameterType="com.movie.pojo.MovieTagMessageExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from mov_tag_mov
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from mov_tag_mov
+    where mtm_id = #{mtmId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from mov_tag_mov
+    where mtm_id = #{mtmId,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.movie.pojo.MovieTagMessageExample">
+    delete from mov_tag_mov
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.movie.pojo.MovieTagMessage">
+    insert into mov_tag_mov (mtm_id, mov_id, tag_id
+      )
+    values (#{mtmId,jdbcType=INTEGER}, #{movId,jdbcType=INTEGER}, #{tagId,jdbcType=INTEGER}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.movie.pojo.MovieTagMessage">
+    insert into mov_tag_mov
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="mtmId != null">
+        mtm_id,
+      </if>
+      <if test="movId != null">
+        mov_id,
+      </if>
+      <if test="tagId != null">
+        tag_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="mtmId != null">
+        #{mtmId,jdbcType=INTEGER},
+      </if>
+      <if test="movId != null">
+        #{movId,jdbcType=INTEGER},
+      </if>
+      <if test="tagId != null">
+        #{tagId,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.movie.pojo.MovieTagMessageExample" resultType="java.lang.Long">
+    select count(*) from mov_tag_mov
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  
+  <!-- 级联查询 -->
+  <sql id="WithTag_Column_List">
+	mtm.`mtm_id`,mtm.`mov_id`,mtm.`tag_id`,m.`m_id`,m.`m_name`,m.`m_poster`,m.`m_year`,m.`m_tag`,m.`m_performer`,m.`m_picture`,m.`m_grade`,m.`m_describe`,mt.`mt_id`,mt.`asp_id`,mt.`mt_name`
+  </sql>
+    
+  <resultMap id="WithTagResultMap" type="com.movie.pojo.MovieTagMessage">
+    <id column="mtm_id" jdbcType="INTEGER" property="mtmId" />
+    <result column="mov_id" jdbcType="INTEGER" property="movId" />
+    <result column="tag_id" jdbcType="INTEGER" property="tagId" />
+    <!-- 指定级联查询出的标签的封装（N-N） -->
+	<association property="movie" javaType="com.movie.pojo.Movie">
+    	<id column="m_id" property="mId" />
+    	<result column="m_name" jdbcType="VARCHAR" property="mName" />
+    	<result column="m_poster" jdbcType="VARCHAR" property="mPoster" />
+    	<result column="m_year" jdbcType="VARCHAR" property="mYear" />
+    	<result column="m_tag" jdbcType="VARCHAR" property="mTag" />
+    	<result column="m_performer" jdbcType="VARCHAR" property="mPerformer" />
+    	<result column="m_picture" jdbcType="VARCHAR" property="mPicture" />
+    	<result column="m_grade" jdbcType="FLOAT" property="mGrade" />
+    	<result column="m_describe" jdbcType="VARCHAR" property="mDescribe" />
+    </association>
+    <!-- 指定级联查询出的标签的封装 -->
+	<association property="movieTag" javaType="com.movie.pojo.MovieTag">
+    	<id column="mt_id" property="mtId" />
+    	<result column="asp_id" jdbcType="INTEGER" property="aspId" />
+    	<result column="mt_name" jdbcType="VARCHAR" property="mtName" />
+    </association>
+  </resultMap>
+  <!-- 查询所有电影和其标签信息 N-N -->
+  <select id="selectByExampleWithTag" parameterType="com.movie.pojo.MovieExample" resultMap="WithTagResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="WithTag_Column_List" />
+	  FROM movie m
+    	LEFT JOIN mov_tag_mov mtm ON m.`m_id` = mtm.`mov_id` 
+    	LEFT JOIN mov_tag mt ON mtm.`tag_id` = mt.`mt_id`
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  
+  <update id="updateByExampleSelective" parameterType="map">
+    update mov_tag_mov
+    <set>
+      <if test="record.mtmId != null">
+        mtm_id = #{record.mtmId,jdbcType=INTEGER},
+      </if>
+      <if test="record.movId != null">
+        mov_id = #{record.movId,jdbcType=INTEGER},
+      </if>
+      <if test="record.tagId != null">
+        tag_id = #{record.tagId,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update mov_tag_mov
+    set mtm_id = #{record.mtmId,jdbcType=INTEGER},
+      mov_id = #{record.movId,jdbcType=INTEGER},
+      tag_id = #{record.tagId,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.movie.pojo.MovieTagMessage">
+    update mov_tag_mov
+    <set>
+      <if test="movId != null">
+        mov_id = #{movId,jdbcType=INTEGER},
+      </if>
+      <if test="tagId != null">
+        tag_id = #{tagId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where mtm_id = #{mtmId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.movie.pojo.MovieTagMessage">
+    update mov_tag_mov
+    set mov_id = #{movId,jdbcType=INTEGER},
+      tag_id = #{tagId,jdbcType=INTEGER}
+    where mtm_id = #{mtmId,jdbcType=INTEGER}
+  </update>
+</mapper>
