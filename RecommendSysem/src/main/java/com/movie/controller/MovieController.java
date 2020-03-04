@@ -39,6 +39,21 @@ public class MovieController {
 	}
 	
 	/**
+	 * 获取单个电影信息
+	 * @return
+	 */
+	@RequestMapping("/getSingle")
+	@ResponseBody
+	public Message getSingle(Movie movie) {
+		Integer mId = movie.getmId();
+		System.out.println(mId);
+		// 该list封装了所有的电影信息
+		Movie singleMovie = movieService.getSingle(mId);
+	
+		return Message.success().add("movie", singleMovie);
+	}
+	
+	/**
 	 * 根据电影名称获取电影信息列表（模糊查询）
 	 * @return
 	 */

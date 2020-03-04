@@ -13,6 +13,8 @@ public interface MovieService {
 
 	public List<Movie> getMovieList();
 
-	public List<Movie> getSearchList(String mName);	
+	public List<Movie> getSearchList(String mName);
+
+	public Movie getSingle(Integer mId);	
 
 }

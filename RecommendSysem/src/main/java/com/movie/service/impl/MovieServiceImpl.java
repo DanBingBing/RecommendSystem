@@ -71,4 +71,13 @@ public class MovieServiceImpl implements MovieService {
 		return list;
 	}
 
+	/**
+	 * 根据电影ID获取电影信息(movie)
+	 */
+	@Override
+	public Movie getSingle(Integer mId) {
+		Movie movie = movieMapper.selectByPrimaryKey(mId);
+		return movie;
+	}
+
 }
