@@ -356,7 +356,7 @@ width:100%;
 .agile-info-wthree-box form {
     margin: 1em 0 0 0;
 }
-.agile-info-wthree-box input[type="submit"] {
+.agile-info-wthree-box input[type="button"],.agile-info-wthree-box input[type="submit"] {
       outline: none;
     font-style: normal;
     padding: 8px 20px;
@@ -372,6 +372,11 @@ width:100%;
     -ms-transition: .5s all;
 }
 .agile-info-wthree-box input[type="submit"]:hover{
+    text-decoration: none;
+    color: #fff;
+    background:#222;
+}
+.agile-info-wthree-box input[type="button"]:hover{
     text-decoration: none;
     color: #fff;
     background:#222;

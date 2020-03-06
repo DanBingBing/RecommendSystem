@@ -147,7 +147,7 @@
 					<div class="browse-inner" id="vue-space">
 						<c:forEach var="movie" items="${movieList}">
 						<div class="col-md-2 w3l-movie-gride-agile">
-							<a href="javascript:;" onclick="play_video('${movie.mName}','${movie.mTag}','${movie.mYear}');" class="hvr-shutter-out-horizontal">
+							<a href="javascript:;" onclick="play_video('${movie.mId}');" class="hvr-shutter-out-horizontal">
 								<img src="${PROJECT_PATH }/${movie.mPoster }" class="figure_pic" title="${movie.mName }" alt=" " />
 								<div class="w3l-action-icon">
 									<i class="fa fa-play-circle" aria-hidden="true"></i>
@@ -155,7 +155,7 @@
 							<div class="mid-1">
 								<div class="w3l-movie-text" id="single">
 									<h6>
-										<a href="javascript:;" onclick="play_video('${movie.mName}','${movie.mTag}','${movie.mYear}');" title="${movie.mName }" class="set-font-size">${movie.mName }</a>
+										<a href="javascript:;" onclick="play_video('${movie.mId}');" title="${movie.mName }" class="set-font-size">${movie.mName }</a>
 									</h6>
 								</div>
 								<div class="w3l-movie-text">
@@ -278,9 +278,8 @@
 <script type="text/javascript">
 	
 	// 通过 v-on:click 绑定的方法可在<script>中直接实现，也可在vue的methods中实现
-	function play_video(mName,mTag,mYear){
-		console.log(mName+":"+mTag+":"+mYear);
-		window.location.href="single.jsp?mName="+movie.mName+"&mTag="+movie.mTag+"&mYear="+movie.mYear;
+	function play_video(mId){
+		window.location.href="single.jsp?mId="+mId;
 	}
 </script>
 </body>

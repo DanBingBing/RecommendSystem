@@ -7,9 +7,12 @@ import org.springframework.stereotype.Service;
 
 import com.movie.dao.MovieMapper;
 import com.movie.dao.MovieTagMessageMapper;
+import com.movie.dao.UserMovieMapper;
 import com.movie.pojo.Movie;
 import com.movie.pojo.MovieExample;
 import com.movie.pojo.MovieTagMessage;
+import com.movie.pojo.UserMovie;
+import com.movie.pojo.UserMovieExample;
 import com.movie.service.MovieService;
 
 @Service
@@ -20,6 +23,9 @@ public class MovieServiceImpl implements MovieService {
 	
 	@Autowired
 	private MovieMapper movieMapper;
+	
+	@Autowired
+	private UserMovieMapper UserMovieMapper;
 	
 	/**
 	 * 三张表的级联查询(movie mov_tag mov_tag_mov)

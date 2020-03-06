@@ -78,6 +78,7 @@
 						<!-- jstl方法取出session中的数据 --> <a href="#">${sessionScope.user.username }</a>
 					</li>
 				</ul>
+				<input type="hidden" value="${sessionScope.user.id}" id="userId" />
 			</div>
 			<div class="clearfix"></div>
 		</div>
@@ -130,7 +131,7 @@
 							</div>
 							<div class="video-grid-single-page-agileits">
 								<div data-video="" id="video" class="video-img">
-									<a href="#" class="hvr-shutter-out-horizontal"> <img
+									<a href="javascript:;" v-on:click="playVideo();" class="hvr-shutter-out-horizontal"> <img
 										src="${PROJECT_PATH }/images/5.jpg" alt=""
 										class="img-responsive" title="点击播放" />
 										<div class="w3l-action-icon">
@@ -160,7 +161,7 @@
 							<div class="all-comments-info">
 								<h3>请为该电影评分</h3>
 								<div class="agile-info-wthree-box">
-									<form action="${PROJECT_PATH }/movie/grade" method="post">
+									<form action="" id="gradeForm">
 										<div class="col-sm-4">
 											<!-- 下拉列表 -->
 											<select class="form-control" name="mov_grade">
@@ -172,9 +173,10 @@
 											</select>
 										</div>
 
-										<input type="submit" value="确定">
+										<input type="button" id="gradeButton" value="确定"  onclick="grade();">
 										<div class="clearfix"></div>
 									</form>
+									<h4 id="message"></h4>
 								</div>
 							</div>
 
@@ -296,27 +298,76 @@
 
 	});
 </script>
-			<!-- //here ends scrolling icon -->
+<!-- //here ends scrolling icon -->
 
-<script type="text/javascript">
-// 或去url中的参数
-	jQuery(document).ready(function() {
-	var mName = getQueryString("mName");
-	var mTag = getQueryString("mTag");
-	var mYear = getQueryString("mYear");
+<script>
+//或去url中的参数
+jQuery(document).ready(function() {
 	
-	var v = new Vue({
-		el: '#single',
-		data: {
-			mName: mName,
-			mTag: mTag,
-			mYear: mYear
-		}
-	});
+	var mId = getQueryString("mId");
+	
+	$.ajax({
+        type : "post",
+        url : "${PROJECT_PATH }/movie/getSingle",
+        dataType : "json",//接收服务端返回的数据类型
+        async : false,
+        data : {"mId":mId},
+        success : function(result) {
+            console.log(result);//打印服务端返回的数据
+            
+            var v = new Vue({
+        		el: '#single',
+        		data: {
+        			mName: result.extend.movie.mName,
+        			mTag: result.extend.movie.mTag,
+        			mYear: result.extend.movie.mYear
+        		},
+            	methods:{
+            		playVideo(){
+            			if($.trim($('#userId').val())!=""){
+            				var uId = $('#userId').val();
+            				
+            				$.ajax({
+                		        type : "post",
+                		        url : "${PROJECT_PATH }/userMovie/addMovieToUser",
+                		        dataType : "json",//接收服务端返回的数据类型
+                		        async : false,
+                		        data : {"mId":mId,"uId":uId},
+                		        success : function(result) {
+                		            console.log(result);//打印服务端返回的数据
+                		            if(result.code==200){
+                		            	// 清空之前的显示的信息
+                		                $("#message").empty();
+                		                $("#message").append(result.extend.msg).attr("style","color:green;");
+                		            }else{
+                		            	// 清空之前的显示的信息
+                		                $("#message").empty();
+                		                $("#message").append(result.extend.msg).attr("style","color:red;");
+                		            }
+                		        },
+                		        error : function() {
+                		        	console.log("服务端出现异常！");
+                		        	//window.location.href="500.jsp";
+                		        }
+                		    });
+            				
+            			}else{
+            				// 清空之前的显示的信息
+            			    $("#message").empty();
+            			    $("#message").append("请先登录！").attr("style","color:red;");
+            			}
+            			
+            		}
+            	}
+        	});
+            
+        },
+        error : function() {
+        	console.log("服务端出现异常！");
+        	//window.location.href="500.jsp";
+        }
+    });
 });
-</script>
-
-			<script>
 //获取url上的参数
 function getQueryString(name) {
     var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
@@ -326,6 +377,47 @@ function getQueryString(name) {
     }else{
         return null;
     }
+}
+
+function grade(){
+	
+	var mId = getQueryString("mId");
+	var grade = $('#gradeForm').serialize();
+	
+	if($.trim($('#userId').val())!=""){
+		var uId = $('#userId').val();
+		
+		$.ajax({
+	        type : "post",
+	        url : "${PROJECT_PATH }/userMovie/grade",
+	        dataType : "json",//接收服务端返回的数据类型
+	        async : false,
+	        //data : {"mId":mId,"mov_grade":mov_grade},
+	        data : {"mov_grade":$('#gradeForm').serialize(),"mId":mId,"uId":uId},
+	        success : function(result) {
+	            console.log(result);//打印服务端返回的数据
+	            if(result.code==200){
+	            	// 清空之前的显示的信息
+	                $("#message").empty();
+	                $("#message").append(result.extend.msg).attr("style","color:green;");
+	            }else{
+	            	// 清空之前的显示的信息
+	                $("#message").empty();
+	                $("#message").append(result.extend.msg).attr("style","color:red;");
+	            }
+	            
+	        },
+	        error : function() {
+	        	console.log("服务端出现异常！");
+	        	//window.location.href="500.jsp";
+	        }
+	    });
+	}else{
+		// 清空之前的显示的信息
+	    $("#message").empty();
+	    $("#message").append("请先登录！").attr("style","color:red;");
+	}
+	
 }
 </script>
 </body>

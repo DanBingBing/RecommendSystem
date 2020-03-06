@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +14,7 @@ import com.movie.utils.RemoveDuplicateUtil;
 import com.movie.pojo.Movie;
 import com.movie.pojo.MovieTagMessage;
 import com.movie.service.MovieService;
+import com.movie.service.UserMovieService;
 import com.movie.utils.JsonUtil;
 
 @Controller
@@ -45,8 +45,9 @@ public class MovieController {
 	@RequestMapping("/getSingle")
 	@ResponseBody
 	public Message getSingle(Movie movie) {
+		
 		Integer mId = movie.getmId();
-		System.out.println(mId);
+		
 		// 该list封装了所有的电影信息
 		Movie singleMovie = movieService.getSingle(mId);
 	
@@ -65,15 +66,6 @@ public class MovieController {
 		
 		return "searchList";
 	}
-	/*public Message searchList(Movie movie) {
-		
-		// 已在前端中判断了 movie.getmName() 是否为空
-		
-		// 该list封装了所有的电影信息
-		List<Movie> searchList = movieService.getSearchList(movie.getmName());
-	
-		return Message.success().add("movieList", searchList);
-	}*/
 	
 	/**
 	 * 获取推荐电影信息列表

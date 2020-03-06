@@ -146,7 +146,7 @@
 					<div class="browse-inner" id="loop">
 
 						<div class="col-md-2 w3l-movie-gride-agile" v-for="item in rows">
-							<a href="javascript:;" v-on:click="play_video(i)" class="hvr-shutter-out-horizontal"><img
+							<a href="javascript:;" v-on:click="play_video(item)" class="hvr-shutter-out-horizontal"><img
 									v-bind:src="item.mPoster" class="figure_pic" v-bind:title="item.mName" alt=" " />
 								<div class="w3l-action-icon">
 									<i class="fa fa-play-circle" aria-hidden="true"></i>
@@ -154,7 +154,7 @@
 							<div class="mid-1">
 								<div class="w3l-movie-text" id="single">
 									<h6>
-										<a href="javascript:;" v-on:click="play_video(i)" v-bind:title="item.mName" class="set-font-size">{{item.mName}}</a>
+										<a href="javascript:;" v-on:click="play_video(item)" v-bind:title="item.mName" class="set-font-size">{{item.mName}}</a>
 									</h6>
 								</div>
 								<div class="w3l-movie-text">
@@ -391,7 +391,7 @@
 	
 	// 通过 v-on:click 绑定的方法可在<script>中直接实现，也可在vue的methods中实现
 	function play_video(movie){
-		window.location.href="single.jsp?mName="+movie.mName+"&mTag="+movie.mTag+"&mYear="+movie.mYear;
+		window.location.href="single.jsp?mId="+movie.mId;
 	}
 </script>
 </body>

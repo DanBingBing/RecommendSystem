@@ -15,6 +15,6 @@ public interface MovieService {
 
 	public List<Movie> getSearchList(String mName);
 
-	public Movie getSingle(Integer mId);	
+	public Movie getSingle(Integer mId);
 
 }

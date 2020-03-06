@@ -593,7 +593,7 @@ jQuery(document).ready(function($) {
 <script type="text/javascript">
 	// 通过 v-on:click 绑定的方法可在<script>中直接实现，也可在vue的methods中实现
 	function play_video(movie){
-		window.location.href="single.jsp?mName="+movie.mName+"&mTag="+movie.mTag+"&mYear="+movie.mYear;
+		window.location.href="single.jsp?mId="+movie.mId;
 	}
 </script>
 </body>

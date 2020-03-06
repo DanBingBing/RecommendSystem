@@ -44,7 +44,7 @@ public class UserController {
 		if(userList.size()==1){
 			if(userList.get(0).getPassword().equals(user.getPassword())){
 				// 在session域中保存用户信息
-				session.setAttribute("user", user);
+				session.setAttribute("user", userList.get(0));
 				return Message.success().add("msg", "正在登录...");
 			}else{
 				return Message.failed().add("msg", "用户名或密码错误！");
