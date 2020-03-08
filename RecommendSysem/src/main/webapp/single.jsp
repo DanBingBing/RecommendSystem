@@ -4,7 +4,7 @@
 	pageContext.setAttribute("PROJECT_PATH",request.getContextPath());
 %>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
 	<title>电影播放</title>
 	<!-- for-mobile-apps -->
@@ -131,7 +131,8 @@
 							</div>
 							<div class="video-grid-single-page-agileits">
 								<div data-video="" id="video" class="video-img">
-									<a href="javascript:;" v-on:click="playVideo();" class="hvr-shutter-out-horizontal"> <img
+									<a href="javascript:;" v-on:click="playVideo()"
+										class="hvr-shutter-out-horizontal"> <img
 										src="${PROJECT_PATH }/images/5.jpg" alt=""
 										class="img-responsive" title="点击播放" />
 										<div class="w3l-action-icon">
@@ -173,7 +174,8 @@
 											</select>
 										</div>
 
-										<input type="button" id="gradeButton" value="确定"  onclick="grade();">
+										<input type="button" id="gradeButton" value="确定"
+											onclick="grade();">
 										<div class="clearfix"></div>
 									</form>
 									<h4 id="message"></h4>
@@ -184,54 +186,41 @@
 					</div>
 				</div>
 				<div class="col-md-4 single-right">
-					<h3>电影推荐</h3>
+
+					<h3>演员</h3>
 					<div class="single-grid-right">
-						<div class="single-right-grids">
-							<div class="col-md-4 single-right-grid-left">
-								<a href="${PROJECT_PATH }/single.jsp"><img
-									src="${PROJECT_PATH }/images/m1.jpg" title="" alt="" /></a>
-							</div>
-							<div class="col-md-8 single-right-grid-right">
-								<a href="single.html" class="title"> 电影名称</a>
-								<p class="views">电影标签</p>
-								<p class="views">年份</p>
-							</div>
-							<div class="clearfix"></div>
+						<div class="col-md-8 single-right-grid-right">
+							<p class="views">演员1 演员2</p>
 						</div>
-						<div class="single-right-grids">
-							<div class="col-md-4 single-right-grid-left">
-								<a href="single.html"><img src="images/m2.jpg" alt="" /></a>
-							</div>
-							<div class="col-md-8 single-right-grid-right">
-								<a href="single.html" class="title"> 电影名称</a>
-								<p class="views">电影标签</p>
-								<p class="views">年份</p>
-							</div>
-							<div class="clearfix"></div>
-						</div>
-						<div class="single-right-grids">
-							<div class="col-md-4 single-right-grid-left">
-								<a href="single.html"><img src="images/m3.jpg" alt="" /></a>
-							</div>
-							<div class="col-md-8 single-right-grid-right">
-								<a href="single.html" class="title"> 电影名称</a>
-								<p class="views">电影标签</p>
-								<p class="views">年份</p>
-							</div>
-							<div class="clearfix"></div>
-						</div>
-
+						<div class="clearfix"></div>
 					</div>
+					<div class="single-grid-right">
+						<div class="col-md-8 single-right-grid-right">
+							<p class="views"></p>
+						</div>
+						<div class="clearfix"></div>
+					</div>
+					<h3>电影简介</h3>
+					<div class="single-grid-right">
+						<div class="col-md-8 single-right-grid-right">
+							<p class="views">电影简介...</p>
+						</div>
+						<div class="clearfix"></div>
+					</div>
+					<div class="single-grid-right">
+						<div class="col-md-8 single-right-grid-right">
+							<p class="views"></p>
+						</div>
+						<div class="clearfix"></div>
+					</div>
+
 				</div>
-
-
 
 				<div class="clearfix"></div>
 			</div>
 
-
-
-			<!-- footer -->
+	
+	<!-- footer -->
 			<div class="footer">
 				<div class="container">
 					<div class="w3ls_footer_grid">
@@ -247,7 +236,7 @@
 							</div>
 						</div>
 						<div class="col-md-6 w3ls_footer_grid_right">
-							<a href="index.jsp"><h2>
+							<a href="${PROJECT_PATH }/index.jsp"><h2>
 									One<span>Movies</span>
 								</h2></a>
 						</div>
@@ -260,20 +249,16 @@
 					</div>
 					<div class="col-md-7 w3ls_footer_grid1_right">
 						<ul>
-							<li><a href="genres.html">Movies</a></li>
-							<li><a href="faq.html">FAQ</a></li>
-							<li><a href="horror.html">Action</a></li>
-							<li><a href="genres.html">Adventure</a></li>
-							<li><a href="comedy.html">Comedy</a></li>
-							<li><a href="icons.html">Icons</a></li>
-							<li><a href="contact.html">Contact Us</a></li>
+							<li><a href="${PROJECT_PATH }/movieList.jsp">Movies</a></li>
+
 						</ul>
 					</div>
 					<div class="clearfix"></div>
 				</div>
 			</div>
-	<!-- //footer -->
-	<!-- Bootstrap Core JavaScript -->
+			<!-- //footer -->
+			<!-- Bootstrap Core JavaScript -->
+	
 <script src="${PROJECT_PATH }/js/bootstrap.min.js"></script>
 <script>
 	jQuery(document).ready(function(){
@@ -291,16 +276,16 @@
 </script>
 			<!-- //Bootstrap Core JavaScript -->
 			<!-- here stars scrolling icon -->
-<script type="text/javascript">
+			<script type="text/javascript">
 	jQuery(document).ready(function() {
 
 		$().UItoTop({ easingType: 'easeOutQuart' });
 
 	});
 </script>
-<!-- //here ends scrolling icon -->
+			<!-- //here ends scrolling icon -->
 
-<script>
+			<script>
 //或去url中的参数
 jQuery(document).ready(function() {
 	
@@ -335,7 +320,7 @@ jQuery(document).ready(function() {
                 		        data : {"mId":mId,"uId":uId},
                 		        success : function(result) {
                 		            console.log(result);//打印服务端返回的数据
-                		            if(result.code==200){
+						            if(result.code==200){
                 		            	// 清空之前的显示的信息
                 		                $("#message").empty();
                 		                $("#message").append(result.extend.msg).attr("style","color:green;");

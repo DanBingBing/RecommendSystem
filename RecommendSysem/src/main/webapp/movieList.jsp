@@ -36,12 +36,12 @@
 	<link href="css/jquery.slidey.min.css" rel="stylesheet">
 	<!-- //banner-slider -->
 	<!-- pop-up -->
-	<link href="css/popuo-box.css" rel="stylesheet" type="text/css"
-		  media="all" />
+	<link href="css/popuo-box.css" rel="stylesheet" type="text/css" media="all" />
 	<!-- //pop-up -->
 	<!-- font-awesome icons -->
 	<link rel="stylesheet" href="css/font-awesome.min.css" />
-
+	<!-- bootstraps -->
+	<script src="js/bootstrap.min.js"></script>
 	<!-- vue -->
 	<script type="text/javascript" src="js/vue.min.js"></script>
 	<!-- js -->
@@ -51,7 +51,22 @@
 	<link href="css/owl.carousel.css" rel="stylesheet" type="text/css"
 		  media="all">
 	<script src="js/owl.carousel.js"></script>
+	<script>
+		$(document).ready(function() {
+			// 轮播区动态效果
+			$("#owl-demo").owlCarousel({
 
+				// 每隔3秒自动切换
+				autoPlay: 3000,
+
+				items : 5,
+				itemsDesktop : [640,4],
+				itemsDesktopSmall : [414,3]
+
+			});
+
+		});
+	</script>
 	<script type="text/javascript" src="js/move-top.js"></script>
 	<script type="text/javascript" src="js/easing.js"></script>
 	<script type="text/javascript">
@@ -186,31 +201,20 @@
 
 				</div>
 
-
 				<div class="clearfix"></div>
 			</div>
 		</div>
 	</div>
 	<!--//browse-agile-w3ls -->
-	<div class="blog-pagenat-wthree">
-		<ul>
-			<li><a class="frist" href="#">上一页</a></li>
-			<li><a href="#">1</a></li>
-			<li><a href="#">2</a></li>
-			<li><a href="#">3</a></li>
-			<li><a href="#">4</a></li>
-			<li><a href="#">5</a></li>
-			<li><a class="last" href="#">下一页</a></li>
-		</ul>
+	<div class="blog-pagenat-wthree" id="page_nav_area">
+		
 	</div>
 </div>
 
 <!-- //banner -->
 <!-- banner-bottom -->
 <div class="banner-bottom">
-	<a href="#">
-		<h4 class="latest-text w3_latest_text">推荐电影</h4>
-	</a>
+	<h4 class="latest-text">推荐电影</h4>
 	<div class="container">
 		<div class="w3_agile_banner_bottom_grid">
 			<div id="owl-demo" class="owl-carousel owl-theme">
@@ -288,33 +292,14 @@
 		</div>
 		<div class="col-md-7 w3ls_footer_grid1_right">
 			<ul>
-				<li><a href="genres.html">Movies</a></li>
-				<li><a href="faq.html">FAQ</a></li>
-				<li><a href="horror.html">Action</a></li>
-				<li><a href="genres.html">Adventure</a></li>
-				<li><a href="comedy.html">Comedy</a></li>
-				<li><a href="icons.html">Icons</a></li>
-				<li><a href="contact.html">Contact Us</a></li>
+				<li><a href="movieList.jsp">Movies</a></li>
 			</ul>
 		</div>
 		<div class="clearfix"></div>
 	</div>
 </div>
 <!-- //footer -->
-<!-- Bootstrap Core JavaScript -->
-<script src="js/bootstrap.min.js"></script>
-<script>
-	$(document).ready(function() {
-		$(".dropdown").hover(function() {
-			$('.dropdown-menu', this).stop(true, true).slideDown("fast");
-			$(this).toggleClass('open');
-		}, function() {
-			$('.dropdown-menu', this).stop(true, true).slideUp("fast");
-			$(this).toggleClass('open');
-		});
-	});
-</script>
-<!-- //Bootstrap Core JavaScript -->
+
 <!-- here stars scrolling icon -->
 <script type="text/javascript">
 	$(document).ready(function() {
@@ -327,47 +312,128 @@
 </script>
 
 <script type="text/javascript">
+jQuery(document).ready(function($) {
+	to_page(1);
+});
 
-	jQuery(document).ready(function($) {
-		$.ajax({
-			type : "GET",
-			url : "${PROJECT_PATH }/movie/movieList",
-			dataType : "json",//接收服务端返回的数据类型
-			async : false,
-			success : function(result) {
-				console.log(result);
+//1.使用vue解析json并渲染电影数据到页面
+var v = new Vue({
+	el: '#loop',
+	data: {
+		// 电影信息列表
+		rows: []
+		
+	}
+});
 
-				// 1.使用vue解析json并渲染电影数据到页面
-				var v = new Vue({
-					el: '#loop',
-					data: {
-						rows: result.extend.movieList
-					}
-				});
+//2.使用vue解析json并渲染电影数据到轮播导航栏
+var v1 = new Vue({
+	el: '#owl-demo',
+	data: {
+		movies: []
+	}
+});
 
-				var vm = new Vue({
-					el: '#owl-demo',
-					data: {
-						movies: result.extend.movieList
-					}
-				});
+function to_page(pn){
+	var result;
+	$.ajax({
+		type : "GET",
+		url : "${PROJECT_PATH }/movie/movieList",
+		data:"pageNumber="+pn,
+		dataType : "json",//接收服务端返回的数据类型
+		async : false,
+		success : function(data) {
+			console.log(data);
+			// 把ajax的请求域vue的渲染数据分离
+			result = data;
+			
+		},
+		error : function() {
+			console.log("服务端出现异常！");
+			//window.location.href="500.jsp";
+		}
+	});
+	// 将ajax请求数据与vue渲染数据分离，vue不能定义在success函数中
+	// 1.解析json并显示电影数据(这里必须将数据赋值给vue中的data)
+	build_movie_table(result);
+	
+	// 3.解析json并显示分页条信息
+	build_page_nav(result);
+}
 
-				$("#owl-demo").owlCarousel({
+function build_movie_table(result){
+	
+	v.rows = result.extend.movieList.list;
+	
+	v1.movies = result.extend.movieList.list;
+	
+}
 
-					autoPlay : 3000,
-
-					items : 5,
-					itemsDesktop : [ 640, 4 ],
-					itemsDesktopSmall : [ 414, 3 ]
-
-				});
-			},
-			error : function() {
-				window.location.href="500.jsp";
-			}
+function build_page_nav(result){
+	// 清空分页栏信息
+	$("#page_nav_area").empty();
+	
+	var ul = $("<ul></ul>").addClass("pagination");
+	
+	var firstPageLi = $("<li></li>").append($("<a></a>").append("首页").attr("href","javascript:scroll(0,0);"));
+	var prePageLi = $("<li></li>").append($("<a></a>").append("&laquo;").attr("href","javascript:scroll(0,0);"));
+	// 判断页码上是否还有前一页，没有则点击a标签不生效
+	if(result.extend.movieList.hasPreviousPage == false){
+		firstPageLi.addClass("disabled");
+		prePageLi.addClass("disabled");
+	}else{
+		// 为首页、上一页添加单击事件
+		firstPageLi.click(function(){
+			to_page(1);
 		});
+		prePageLi.click(function(){
+			to_page(result.extend.pageInfo.pageNum - 1);
+		});
+	}
+	// javascript:scroll(0,0);表示点击之后立即回到顶部
+	var nextPageLi = $("<li></li>").append($("<a></a>").append("&raquo;").attr("href","javascript:scroll(0,0);"));
+	var lastPageLi = $("<li></li>").append($("<a></a>").append("末页").attr("href","javascript:scroll(0,0);"));
+	// 判断页码上是否还有下一页，没有则点击a标签不生效
+	if(result.extend.movieList.hasNextPage == false){
+		nextPageLi.addClass("disabled");
+		lastPageLi.addClass("disabled");
+	}else{
+		// 为下一页、末页添加单击事件
+		nextPageLi.click(function(){
+			to_page(result.extend.movieList.pageNum + 1);
+		});
+		lastPageLi.click(function(){
+			to_page(result.extend.movieList.pages);
+		});
+	}
+	
+	// 添加首页和前一页的提示
+	ul.append(firstPageLi).append(prePageLi);
+	
+	// 遍历显示的页码号 1,2,3 ...,遍历给ul添加页码提示
+	$.each(result.extend.movieList.navigatepageNums,function(index,item){
+		var pageLi = $("<li></li>").append($("<a></a>").append(item).attr("href","javascript:scroll(0,0);"));
+		// 判断当前页是否是传过来的数据中的信息，是则可以点击a标签
+		if(result.extend.movieList.pageNum == item){
+			pageLi.addClass("active");
+		}
+		// 绑定单击事件，获取对应页码的数据
+		pageLi.click(function(){
+			to_page(item);
+		});
+		
+		ul.append(pageLi);
 	});
 	
+	// 添加末页和下一页的提示
+	ul.append(nextPageLi).append(lastPageLi);
+	
+	// 把ul加入到#page_nav_area
+	ul.appendTo("#page_nav_area");
+}
+</script>
+
+<script type="text/javascript">
 	function searchMovie() {
 		// 1.判断搜索框是否为空，为空不能进行搜索
 		var name = $("#search").val();

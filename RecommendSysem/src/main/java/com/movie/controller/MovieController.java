@@ -7,14 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.movie.utils.Message;
 import com.movie.utils.RemoveDuplicateUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.movie.pojo.Movie;
 import com.movie.pojo.MovieTagMessage;
 import com.movie.service.MovieService;
-import com.movie.service.UserMovieService;
 import com.movie.utils.JsonUtil;
 
 @Controller
@@ -30,12 +32,20 @@ public class MovieController {
 	 */
 	@RequestMapping("/movieList")
 	@ResponseBody
-	public Message movieList() {
+	public Message movieList(@RequestParam(value="pageNumber",defaultValue="1") Integer pageNumber) {
+		
+		// 在查询之前调用，传入页码、以及每页大小
+		PageHelper.startPage(pageNumber, 30);
 		
 		// 该list封装了所有的电影信息
 		List<Movie> movieList = movieService.getMovieList();
+
+		// 使用pageInfo来封装list集合
+		// 因为它里面封装了可在页面使用的数据信息（包括详细的分页信息及查询到的数据）,传入分页导航栏显示的页码数
+		PageInfo<Movie> page = new PageInfo<Movie>(movieList,5);
+		
 	
-		return Message.success().add("movieList", movieList);
+		return Message.success().add("movieList", page);
 	}
 	
 	/**
