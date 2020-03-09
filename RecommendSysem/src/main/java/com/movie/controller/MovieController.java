@@ -65,19 +65,6 @@ public class MovieController {
 	}
 	
 	/**
-	 * 根据电影名称获取电影信息列表（模糊查询）
-	 * @return
-	 */
-	@RequestMapping("/searchList")
-	public String searchList(Movie movie,Model model) {
-		// 该list封装了查询到的所有电影信息
-		List<Movie> searchList = movieService.getSearchList(movie.getmName());
-		model.addAttribute("movieList", searchList);
-		
-		return "searchList";
-	}
-	
-	/**
 	 * 获取推荐电影信息列表
 	 * @return
 	 */
@@ -89,6 +76,19 @@ public class MovieController {
 		List<Movie> movieList = movieService.getMovieList();
 	
 		return Message.success().add("movieList", movieList);
+	}
+	
+	/**
+	 * 根据电影名称获取电影信息列表（模糊查询）
+	 * @return
+	 */
+	@RequestMapping("/searchList")
+	public String searchList(Movie movie,Model model) {
+		// 该list封装了查询到的所有电影信息
+		List<Movie> searchList = movieService.getSearchList(movie.getmName());
+		model.addAttribute("movieList", searchList);
+		
+		return "searchList";
 	}
 
 	/**

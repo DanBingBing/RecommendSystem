@@ -53,4 +53,15 @@ public class UserMovieServiceImpl implements UserMovieService {
 		userMovieMapper.insertSelective(userMovie);
 	}
 
+	/**
+	 * 根据用户ID查找用户观看过的所有电影ID(user_movie)
+	 */
+	@Override
+	public List<UserMovie> getHistoryMovies(Integer uId) {
+		UserMovieExample userMovieExample = new UserMovieExample();
+		userMovieExample.createCriteria().andUserIdEqualTo(uId);
+		
+		return userMovieMapper.selectByExample(userMovieExample);
+	}
+
 }

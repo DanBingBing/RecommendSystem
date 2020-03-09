@@ -41,8 +41,6 @@
     <!-- //pop-up -->
     <!-- font-awesome icons -->
     <link rel="stylesheet" href="css/font-awesome.min.css" />
-    <!-- bootstrap -->
-    <script src="js/bootstrap.min.js"></script>
     <!-- vue -->
     <script type="text/javascript" src="js/vue.min.js"></script>
     <!-- js -->
@@ -56,6 +54,7 @@
     <script type="text/javascript" src="js/easing.js"></script>
     <script type="text/javascript">
         jQuery(document).ready(function($) {
+        	// 返回顶部
             $(".scroll").click(function(event) {
                 event.preventDefault();
                 $('html,body').animate({
@@ -354,7 +353,21 @@
     </div>
 </div>
 <!-- //footer -->
-
+<!-- Bootstrap Core JavaScript -->
+<script src="js/bootstrap.min.js"></script>
+<script>
+    $(document).ready(function() {
+    	// 模态框控制
+        $(".dropdown").hover(function() {
+            $('.dropdown-menu', this).stop(true, true).slideDown("fast");
+            $(this).toggleClass('open');
+        }, function() {
+            $('.dropdown-menu', this).stop(true, true).slideUp("fast");
+            $(this).toggleClass('open');
+        });
+    });
+</script>
+<!-- //Bootstrap Core JavaScript -->
 <!-- here stars scrolling icon -->
 <script type="text/javascript">
     $(document).ready(function() {
@@ -388,19 +401,6 @@ var v1 = new Vue({
 	el: '#run',
 	data: {
 		movies:[]
-	},
-	beforeMount(){
-		//轮播区动态效果
-		$("#owl-demo").owlCarousel({
-
-			// 每隔3秒自动切换
-			autoPlay: 3000,
-
-			items : 5,
-			itemsDesktop : [640,4],
-			itemsDesktopSmall : [414,3]
-
-		});
 	}
 });
 

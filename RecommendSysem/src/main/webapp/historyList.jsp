@@ -49,22 +49,7 @@
 	<link href="css/owl.carousel.css" rel="stylesheet" type="text/css"
 		  media="all">
 	<script src="js/owl.carousel.js"></script>
-	<script>
-		$(document).ready(function() {
-			// 轮播区动态效果
-			$("#owl-demo").owlCarousel({
 
-				// 每隔3秒自动切换
-				autoPlay: 3000,
-
-				items : 5,
-				itemsDesktop : [640,4],
-				itemsDesktopSmall : [414,3]
-
-			});
-
-		});
-	</script>
 	<script type="text/javascript" src="js/move-top.js"></script>
 	<script type="text/javascript" src="js/easing.js"></script>
 	<script type="text/javascript">
@@ -104,7 +89,7 @@
 					<a href="#">${sessionScope.user.username }</a>
 				</li>
 			</ul>
-
+			<input type="hidden" value="${sessionScope.user.id}" id="userId" />
 		</div>
 		<div class="clearfix"></div>
 	</div>
@@ -128,8 +113,8 @@
 				 id="bs-example-navbar-collapse-1">
 				<nav>
 					<ul class="nav navbar-nav">
-						<li class="active"><a href="${PROJECT_PATH }/index.jsp">首页</a></li>
-						<li><a href="${PROJECT_PATH }/historyList.jsp">观看历史</a></li>
+						<li><a href="index.jsp">首页</a></li>
+						<li class="active"><a href="historyList.jsp">观看历史</a></li>
 					</ul>
 				</nav>
 			</div>
@@ -150,7 +135,7 @@
 						<div class="agileits-single-top">
 							<ol class="breadcrumb">
 								<li><a href="index.jsp">Home</a></li>
-								<li class="active">recommend</li>
+								<li class="active">history</li>
 							</ol>
 						</div>
 					</div>
@@ -209,57 +194,6 @@
 	</div>
 </div>
 
-<!-- //banner -->
-<!-- banner-bottom -->
-<div class="banner-bottom">
-	<h4 class="latest-text">推荐电影</h4>
-	<div class="container">
-		<div class="w3_agile_banner_bottom_grid">
-			<div id="owl-demo" class="owl-carousel owl-theme">
-
-				<div class="item" v-for="i in movies">
-					<div class="w3l-movie-gride-agile w3l-movie-gride-agile1">
-						<a href="javascript:;" v-on:click="play_video(i)" class="hvr-shutter-out-horizontal"><img
-								v-bind:src="i.mPoster" v-bind:title="i.mName"
-								class="img-responsive" alt=" " />
-							<div class="w3l-action-icon">
-								<i class="fa fa-play-circle" aria-hidden="true"></i>
-							</div> </a>
-						<div class="mid-1 agileits_w3layouts_mid_1_home">
-							<div class="w3l-movie-text">
-								<h6>
-									<a href="javascript:;" v-on:click="play_video(i)" v-bind:title="i.mName" class="set-font-size">{{i.mName}}</a>
-								</h6>
-							</div>
-							<div class="mid-2 agile_mid_2_home">
-								<p>{{i.mYear}}</p>
-								<div class="block-stars">
-									<ul class="w3l-ratings">
-										<li><a href="#"><i class="fa fa-star"
-														   aria-hidden="true"></i></a></li>
-										<li><a href="#"><i class="fa fa-star"
-														   aria-hidden="true"></i></a></li>
-										<li><a href="#"><i class="fa fa-star"
-														   aria-hidden="true"></i></a></li>
-										<li><a href="#"><i class="fa fa-star"
-														   aria-hidden="true"></i></a></li>
-										<li><a href="#"><i class="fa fa-star-half-o"
-														   aria-hidden="true"></i></a></li>
-									</ul>
-								</div>
-								<div class="clearfix"></div>
-							</div>
-						</div>
-
-					</div>
-				</div>
-
-			</div>
-		</div>
-	</div>
-</div>
-
-<!-- //Latest-tv-series -->
 <!-- footer -->
 <div class="footer">
 	<div class="container">
@@ -301,7 +235,7 @@
 <script src="js/bootstrap.min.js"></script>
 <script>
     $(document).ready(function() {
-    	
+    	// 模态框控制
         $(".dropdown").hover(function() {
             $('.dropdown-menu', this).stop(true, true).slideDown("fast");
             $(this).toggleClass('open');
@@ -325,7 +259,7 @@
 
 <script type="text/javascript">
 jQuery(document).ready(function($) {
-	to_page(1);
+	to_page();
 });
 
 //1.使用vue解析json并渲染电影数据到页面
@@ -338,111 +272,42 @@ var v = new Vue({
 	}
 });
 
-//2.使用vue解析json并渲染电影数据到轮播导航栏
-var v1 = new Vue({
-	el: '#owl-demo',
-	data: {
-		movies: []
-	}
-});
-
-function to_page(pn){
+function to_page(){
 	var result;
-	$.ajax({
-		type : "GET",
-		url : "${PROJECT_PATH }/movie/movieList",
-		data:"pageNumber="+pn,
-		dataType : "json",//接收服务端返回的数据类型
-		async : false,
-		success : function(data) {
-			console.log(data);
-			// 把ajax的请求域vue的渲染数据分离
-			result = data;
-			
-		},
-		error : function() {
-			console.log("服务端出现异常！");
-			//window.location.href="500.jsp";
-		}
-	});
-	// 将ajax请求数据与vue渲染数据分离，vue不能定义在success函数中
-	// 1.解析json并显示电影数据(这里必须将数据赋值给vue中的data)
-	build_movie_table(result);
 	
-	// 3.解析json并显示分页条信息
-	build_page_nav(result);
-}
+	if($.trim($('#userId').val())!=""){
+		var uId = $('#userId').val();
+		
+		$.ajax({
+			type : "GET",
+			url : "${PROJECT_PATH }/userMovie/historyList",
+			data:"uId="+uId,
+			dataType : "json",//接收服务端返回的数据类型
+			async : false,
+			success : function(data) {
+				console.log(data);
+				// 把ajax的请求域vue的渲染数据分离
+				result = data;
+				
+			},
+			error : function() {
+				console.log("服务端出现异常！");
+				//window.location.href="500.jsp";
+			}
+		});
+		// 将ajax请求数据与vue渲染数据分离，vue不能定义在success函数中
+		build_movie_table(result);
+		
+	}
+}		
+	
 
 function build_movie_table(result){
 	
-	v.rows = result.extend.movieList.list;
-	
-	v1.movies = result.extend.movieList.list;
+	v.rows = result.extend.historyList;
 	
 }
 
-function build_page_nav(result){
-	// 清空分页栏信息
-	$("#page_nav_area").empty();
-	
-	var ul = $("<ul></ul>").addClass("pagination");
-	
-	var firstPageLi = $("<li></li>").append($("<a></a>").append("首页").attr("href","javascript:scroll(0,0);"));
-	var prePageLi = $("<li></li>").append($("<a></a>").append("&laquo;").attr("href","javascript:scroll(0,0);"));
-	// 判断页码上是否还有前一页，没有则点击a标签不生效
-	if(result.extend.movieList.hasPreviousPage == false){
-		firstPageLi.addClass("disabled");
-		prePageLi.addClass("disabled");
-	}else{
-		// 为首页、上一页添加单击事件
-		firstPageLi.click(function(){
-			to_page(1);
-		});
-		prePageLi.click(function(){
-			to_page(result.extend.pageInfo.pageNum - 1);
-		});
-	}
-	// javascript:scroll(0,0);表示点击之后立即回到顶部
-	var nextPageLi = $("<li></li>").append($("<a></a>").append("&raquo;").attr("href","javascript:scroll(0,0);"));
-	var lastPageLi = $("<li></li>").append($("<a></a>").append("末页").attr("href","javascript:scroll(0,0);"));
-	// 判断页码上是否还有下一页，没有则点击a标签不生效
-	if(result.extend.movieList.hasNextPage == false){
-		nextPageLi.addClass("disabled");
-		lastPageLi.addClass("disabled");
-	}else{
-		// 为下一页、末页添加单击事件
-		nextPageLi.click(function(){
-			to_page(result.extend.movieList.pageNum + 1);
-		});
-		lastPageLi.click(function(){
-			to_page(result.extend.movieList.pages);
-		});
-	}
-	
-	// 添加首页和前一页的提示
-	ul.append(firstPageLi).append(prePageLi);
-	
-	// 遍历显示的页码号 1,2,3 ...,遍历给ul添加页码提示
-	$.each(result.extend.movieList.navigatepageNums,function(index,item){
-		var pageLi = $("<li></li>").append($("<a></a>").append(item).attr("href","javascript:scroll(0,0);"));
-		// 判断当前页是否是传过来的数据中的信息，是则可以点击a标签
-		if(result.extend.movieList.pageNum == item){
-			pageLi.addClass("active");
-		}
-		// 绑定单击事件，获取对应页码的数据
-		pageLi.click(function(){
-			to_page(item);
-		});
-		
-		ul.append(pageLi);
-	});
-	
-	// 添加末页和下一页的提示
-	ul.append(nextPageLi).append(lastPageLi);
-	
-	// 把ul加入到#page_nav_area
-	ul.appendTo("#page_nav_area");
-}
 </script>
 
 <script type="text/javascript">
