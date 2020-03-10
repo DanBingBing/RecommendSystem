@@ -77,9 +77,9 @@
 			</a>
 		</div>
 		<div class="w3_search">
-			<form id="searchForm" action="${PROJECT_PATH }/movie/searchList" method="post">
+			<form id="searchForm" action="" method="">
 				<input type="text" name="mName" id="search" placeholder="请输入电影名称" required="">
-				<input type="submit" value="搜索">
+				<input type="button" value="搜索" onclick="searchMovie();">
 			</form>
 		</div>
 		<div class="w3l_sign_in_register">
@@ -113,7 +113,7 @@
 				 id="bs-example-navbar-collapse-1">
 				<nav>
 					<ul class="nav navbar-nav">
-						<li><a href="index.jsp">首页</a></li>
+						<li><a href="movieList.jsp">首页</a></li>
 						<li class="active"><a href="historyList.jsp">观看历史</a></li>
 					</ul>
 				</nav>
@@ -130,7 +130,7 @@
 			<!--/browse-agile-w3ls -->
 			<div class="browse-agile-w3ls general-w3ls">
 				<div class="tittle-head">
-					<h4 class="latest-text">推荐电影</h4>
+					<h4 class="latest-text">历史记录</h4>
 					<div class="container">
 						<div class="agileits-single-top">
 							<ol class="breadcrumb">
@@ -183,8 +183,6 @@
 					</div>
 
 				</div>
-
-				<div class="clearfix"></div>
 			</div>
 		</div>
 	</div>
@@ -259,7 +257,7 @@
 
 <script type="text/javascript">
 jQuery(document).ready(function($) {
-	to_page();
+	to_page(1);
 });
 
 //1.使用vue解析json并渲染电影数据到页面
@@ -272,16 +270,16 @@ var v = new Vue({
 	}
 });
 
-function to_page(){
+function to_page(pn){
 	var result;
 	
 	if($.trim($('#userId').val())!=""){
 		var uId = $('#userId').val();
 		
 		$.ajax({
-			type : "GET",
+			type : "post",
 			url : "${PROJECT_PATH }/userMovie/historyList",
-			data:"uId="+uId,
+			data:{"pageNumber":pn,"uId":uId},
 			dataType : "json",//接收服务端返回的数据类型
 			async : false,
 			success : function(data) {
@@ -298,16 +296,80 @@ function to_page(){
 		// 将ajax请求数据与vue渲染数据分离，vue不能定义在success函数中
 		build_movie_table(result);
 		
+		// 解析json并显示分页条信息
+		build_page_nav(result);
 	}
 }		
 	
 
 function build_movie_table(result){
-	
-	v.rows = result.extend.historyList;
+	// 为vue实例中的data赋值
+	v.rows = result.extend.historyList.list;
 	
 }
 
+function build_page_nav(result){
+	// 清空分页栏信息
+	$("#page_nav_area").empty();
+	
+	var ul = $("<ul></ul>").addClass("pagination");
+	
+	var firstPageLi = $("<li></li>").append($("<a></a>").append("首页").attr("href","javascript:scroll(0,0);"));
+	var prePageLi = $("<li></li>").append($("<a></a>").append("&laquo;").attr("href","javascript:scroll(0,0);"));
+	// 判断页码上是否还有前一页，没有则点击a标签不生效
+	if(result.extend.historyList.hasPreviousPage == false){
+		firstPageLi.addClass("disabled");
+		prePageLi.addClass("disabled");
+	}else{
+		// 为首页、上一页添加单击事件
+		firstPageLi.click(function(){
+			to_page(1);
+		});
+		prePageLi.click(function(){
+			to_page(result.extend.pageInfo.pageNum - 1);
+		});
+	}
+	// javascript:scroll(0,0);表示点击之后立即回到顶部
+	var nextPageLi = $("<li></li>").append($("<a></a>").append("&raquo;").attr("href","javascript:scroll(0,0);"));
+	var lastPageLi = $("<li></li>").append($("<a></a>").append("末页").attr("href","javascript:scroll(0,0);"));
+	// 判断页码上是否还有下一页，没有则点击a标签不生效
+	if(result.extend.historyList.hasNextPage == false){
+		nextPageLi.addClass("disabled");
+		lastPageLi.addClass("disabled");
+	}else{
+		// 为下一页、末页添加单击事件
+		nextPageLi.click(function(){
+			to_page(result.extend.historyList.pageNum + 1);
+		});
+		lastPageLi.click(function(){
+			to_page(result.extend.historyList.pages);
+		});
+	}
+	
+	// 添加首页和前一页的提示
+	ul.append(firstPageLi).append(prePageLi);
+	
+	// 遍历显示的页码号 1,2,3 ...,遍历给ul添加页码提示
+	$.each(result.extend.historyList.navigatepageNums,function(index,item){
+		var pageLi = $("<li></li>").append($("<a></a>").append(item).attr("href","javascript:scroll(0,0);"));
+		// 判断当前页是否是传过来的数据中的信息，是则可以点击a标签
+		if(result.extend.historyList.pageNum == item){
+			pageLi.addClass("active");
+		}
+		// 绑定单击事件，获取对应页码的数据
+		pageLi.click(function(){
+			to_page(item);
+		});
+		
+		ul.append(pageLi);
+	});
+	
+	// 添加末页和下一页的提示
+	ul.append(nextPageLi).append(lastPageLi);
+	
+	// 把ul加入到#page_nav_area
+	ul.appendTo("#page_nav_area");
+}
 </script>
 
 <script type="text/javascript">
@@ -316,18 +378,7 @@ function build_movie_table(result){
 		var name = $("#search").val();
 
 		if (name.length>0) {
-			// 2.获取搜索框中的值并传递给后台处理
-			$.ajax({
-				//表单提交时以post方式，否则后台封装的对象是乱码
-				type : "post",
-				url : "${PROJECT_PATH }/movie/searchList",
-				data: $('#searchForm').serialize(),
-				dataType : "json",//接收服务端返回的数据类型
-				async : false,
-				success : function(result) {
-					window.location.href="searchList.jsp";
-				}
-			});
+			window.location.href="searchList.jsp?mName="+name;				
 		}
 
 	}
@@ -336,6 +387,7 @@ function build_movie_table(result){
 	function play_video(movie){
 		window.location.href="single.jsp?mId="+movie.mId;
 	}
+	
 </script>
 </body>
 </html>

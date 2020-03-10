@@ -80,9 +80,9 @@
 			</a>
 		</div>
 		<div class="w3_search">
-			<form id="searchForm" action="">
+			<form id="searchForm" action="${PROJECT_PATH }/movie/searchList" method="post">
 				<input type="text" name="mName" id="search" placeholder="请输入电影名称" required="">
-				<input type="button" value="搜索" onclick="searchMovie();">
+				<input type="submit" value="搜索">
 			</form>
 		</div>
 		<div class="w3l_sign_in_register">
@@ -144,25 +144,26 @@
 					</div>
 				</div>
 				<div class="container">
-					<div class="browse-inner" id="loop">
-						<div class="col-md-2 w3l-movie-gride-agile" v-for="item in rows">
-							<a href="javascript:;" v-on:click="play_video(item)" class="hvr-shutter-out-horizontal"><img
-									v-bind:src="item.mPoster" class="figure_pic" v-bind:title="item.mName" alt=" " />
+					<div class="browse-inner" id="vue-space">
+						<c:forEach var="movie" items="${movieList}">
+						<div class="col-md-2 w3l-movie-gride-agile">
+							<a href="javascript:;" onclick="play_video('${movie.mId}');" class="hvr-shutter-out-horizontal">
+								<img src="${PROJECT_PATH }/${movie.mPoster }" class="figure_pic" title="${movie.mName }" alt=" " />
 								<div class="w3l-action-icon">
 									<i class="fa fa-play-circle" aria-hidden="true"></i>
 								</div> </a>
 							<div class="mid-1">
 								<div class="w3l-movie-text" id="single">
 									<h6>
-										<a href="javascript:;" v-on:click="play_video(item)" v-bind:title="item.mName" class="set-font-size">{{item.mName}}</a>
+										<a href="javascript:;" onclick="play_video('${movie.mId}');" title="${movie.mName }" class="set-font-size">${movie.mName }</a>
 									</h6>
 								</div>
 								<div class="w3l-movie-text">
-									<h6>{{item.mTag}}</h6>
+									<h6>${movie.mTag }</h6>
 								</div>
 								<div class="mid-2">
 
-									<p>{{item.mYear}}</p>
+									<p>${movie.mYear }</p>
 									<div class="block-stars">
 										<ul class="w3l-ratings">
 											<li><a href="#"><i class="fa fa-star"
@@ -181,10 +182,13 @@
 								</div>
 							</div>
 						</div>
-
+						</c:forEach>
 					</div>
 
 				</div>
+
+
+				<div class="clearfix"></div>
 			</div>
 		</div>
 	</div>
@@ -258,150 +262,88 @@
 	});
 </script>
 
-<script type="text/javascript">
-	$(document).ready(function($) {
-		// 获取url中的参数
-		var mName = getQueryString("mName");
+<script>
+	$(document).ready(function() {
+		var result;
+	
+		build_page_nav(result);
+	});
+	
+	function build_page_nav(result) {
+		// 清空分页栏信息
+		$("#page_nav_area").empty();
 
-		//将搜索的数据显示在搜索页面的搜索框中
-        $("#search").val(mName);
-        
-		// 获取搜索框中的数据
-		var name = $("#search").val();
-		
-		// 防止用户直接输入该地址没有带参数则不查询
-		if(mName!=null || mName!=''){
-			to_page(1);
+		var ul = $("<ul></ul>").addClass("pagination");
+
+		var firstPageLi = $("<li></li>").append(
+				$("<a></a>").append("首页").attr("href","javascript:scroll(0,0);"));
+		var prePageLi = $("<li></li>").append(
+				$("<a></a>").append("&laquo;").attr("href","javascript:scroll(0,0);"));
+		// 判断页码上是否还有前一页，没有则点击a标签不生效
+		if (result.extend.historyList.hasPreviousPage == false) {
+			firstPageLi.addClass("disabled");
+			prePageLi.addClass("disabled");
+		} else {
+			// 为首页、上一页添加单击事件
+			firstPageLi.click(function() {
+				to_page(1);
+			});
+			prePageLi.click(function() {
+				to_page(result.extend.pageInfo.pageNum - 1);
+			});
 		}
-		
-	});
-	
-	//1.使用vue解析json并渲染电影数据到页面
-	var v = new Vue({
-		el: '#loop',
-		data: {
-			// 电影信息列表
-			rows: []
-			
+		// javascript:scroll(0,0);表示点击之后立即回到顶部
+		var nextPageLi = $("<li></li>").append(
+				$("<a></a>").append("&raquo;").attr("href","javascript:scroll(0,0);"));
+		var lastPageLi = $("<li></li>").append(
+				$("<a></a>").append("末页").attr("href","javascript:scroll(0,0);"));
+		// 判断页码上是否还有下一页，没有则点击a标签不生效
+		if (result.extend.historyList.hasNextPage == false) {
+			nextPageLi.addClass("disabled");
+			lastPageLi.addClass("disabled");
+		} else {
+			// 为下一页、末页添加单击事件
+			nextPageLi.click(function() {
+				to_page(result.extend.historyList.pageNum + 1);
+			});
+			lastPageLi.click(function() {
+				to_page(result.extend.historyList.pages);
+			});
 		}
-	});
-	
-	function to_page(pn){
-		
-		var mName = $("#search").val();
-        
-		$.ajax({
-			// 传递中文参数是必须使用post请求
-			type : "post",
-			url : "${PROJECT_PATH }/movie/searchList1",
-			data:{"pageNumber":pn,"mName":mName},
-			dataType : "json",//接收服务端返回的数据类型
-			success : function(result) {
-				console.log(result);
-				
-				// 这里没有分离ajax获取数据与vue渲染数据，因为点击搜索按钮时刷新了页面
-				// 更重要的原因是要分离存在错误不能解决
-				
-				// 为vue实例中的data赋值
-				v.rows = result.extend.searchList.list;
-				
-				// 清空分页栏信息
-				$("#page_nav_area").empty();
-				
-				var ul = $("<ul></ul>").addClass("pagination");
-				
-				var firstPageLi = $("<li></li>").append($("<a></a>").append("首页").attr("href","javascript:scroll(0,0);"));
-				var prePageLi = $("<li></li>").append($("<a></a>").append("&laquo;").attr("href","javascript:scroll(0,0);"));
-				// 判断页码上是否还有前一页，没有则点击a标签不生效
-				if(result.extend.searchList.hasPreviousPage == false){
-					firstPageLi.addClass("disabled");
-					prePageLi.addClass("disabled");
-				}else{
-					// 为首页、上一页添加单击事件
-					firstPageLi.click(function(){
-						to_page(1);
-					});
-					prePageLi.click(function(){
-						to_page(result.extend.searchList.pageNum - 1);
-					});
-				}
-				// javascript:scroll(0,0);表示点击之后立即回到顶部
-				var nextPageLi = $("<li></li>").append($("<a></a>").append("&raquo;").attr("href","javascript:scroll(0,0);"));
-				var lastPageLi = $("<li></li>").append($("<a></a>").append("末页").attr("href","javascript:scroll(0,0);"));
-				// 判断页码上是否还有下一页，没有则点击a标签不生效
-				if(result.extend.searchList.hasNextPage == false){
-					nextPageLi.addClass("disabled");
-					lastPageLi.addClass("disabled");
-				}else{
-					// 为下一页、末页添加单击事件
-					nextPageLi.click(function(){
-						to_page(result.extend.searchList.pageNum + 1);
-					});
-					lastPageLi.click(function(){
-						to_page(result.extend.searchList.pages);
-					});
-				}
-				
-				// 添加首页和前一页的提示
-				ul.append(firstPageLi).append(prePageLi);
-				
-				// 遍历显示的页码号 1,2,3 ...,遍历给ul添加页码提示
-				$.each(result.extend.searchList.navigatepageNums,function(index,item){
-					var pageLi = $("<li></li>").append($("<a></a>").append(item).attr("href","javascript:scroll(0,0);"));
+
+		// 添加首页和前一页的提示
+		ul.append(firstPageLi).append(prePageLi);
+
+		// 遍历显示的页码号 1,2,3 ...,遍历给ul添加页码提示
+		$.each(result.extend.historyList.navigatepageNums,
+				function(index, item) {
+					var pageLi = $("<li></li>").append(
+							$("<a></a>").append(item).attr("href","javascript:scroll(0,0);"));
 					// 判断当前页是否是传过来的数据中的信息，是则可以点击a标签
-					if(result.extend.searchList.pageNum == item){
+					if (result.extend.historyList.pageNum == item) {
 						pageLi.addClass("active");
 					}
 					// 绑定单击事件，获取对应页码的数据
-					pageLi.click(function(){
+					pageLi.click(function() {
 						to_page(item);
 					});
-					
+
 					ul.append(pageLi);
 				});
-				
-				// 添加末页和下一页的提示
-				ul.append(nextPageLi).append(lastPageLi);
-				
-				// 把ul加入到#page_nav_area
-				ul.appendTo("#page_nav_area");	
-				
-			},
-			error : function() {
-				console.log("服务端出现异常！");
-				//window.location.href="500.jsp";
-			}
-		});
-		
-	}		
-		
+
+		// 添加末页和下一页的提示
+		ul.append(nextPageLi).append(lastPageLi);
+
+		// 把ul加入到#page_nav_area
+		ul.appendTo("#page_nav_area");
+	}
 </script>
 
 <script type="text/javascript">
-	function searchMovie() {
-		var name = $("#search").val();
-		// 1.判断搜索框是否为空，不为空进入搜索
-		if (name.length>0) {
-			window.location.href="searchList.jsp?mName="+name;
-		}
-
-	}
 	
 	// 通过 v-on:click 绑定的方法可在<script>中直接实现，也可在vue的methods中实现
 	function play_video(mId){
 		window.location.href="single.jsp?mId="+mId;
-	}
-	
-	//获取url上的参数
-	function getQueryString(name) {
-	    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
-	    var r = window.location.search.substr(1).match(reg);
-	    if (r != null) {
-	    	// 可截取中文参数
-	        return decodeURIComponent(r[2]);
-	    }else{
-	        return null;
-	    }
 	}
 </script>
 </body>

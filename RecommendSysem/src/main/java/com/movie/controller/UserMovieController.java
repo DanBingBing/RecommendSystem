@@ -7,10 +7,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.movie.utils.Message;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.movie.pojo.Movie;
 import com.movie.pojo.UserMovie;
 import com.movie.service.MovieService;
@@ -26,7 +29,7 @@ public class UserMovieController {
 	@Autowired
 	private MovieService movieService;
 	
-	@RequestMapping("/addMovieToUser")
+	@RequestMapping(value="/addMovieToUser",method=RequestMethod.POST)
 	@ResponseBody
 	public Message addMovieToUser(@RequestParam("uId")String uId,@RequestParam("mId")String mId) {
 		Integer id = Integer.parseInt(mId);
@@ -39,7 +42,7 @@ public class UserMovieController {
 		
 	}
 	
-	@RequestMapping("/grade")
+	@RequestMapping(value="/grade",method=RequestMethod.POST)
 	@ResponseBody
 	public Message grade(@RequestParam("uId")Integer uId,@RequestParam("mId")Integer mId,@RequestParam("mov_grade")String mov_grade) {
 		
@@ -62,9 +65,12 @@ public class UserMovieController {
 		
 	}
 	
-	@RequestMapping("/historyList")
+	@RequestMapping(value="/historyList",method=RequestMethod.POST)
 	@ResponseBody
-	public Message historyList(@RequestParam("uId")Integer uId) {
+	public Message historyList(@RequestParam(value="pageNumber",defaultValue="1") Integer pageNumber,@RequestParam("uId")Integer uId) {
+		// 在查询之前调用，传入页码、以及每页大小
+		PageHelper.startPage(pageNumber, 30);
+		
 		List<UserMovie> list = userMovieService.getHistoryMovies(uId);
 		
 		List<Movie> historyList = new ArrayList<Movie>();
@@ -74,7 +80,11 @@ public class UserMovieController {
 			historyList.add(movie);
 		}
 		
-		return Message.success().add("historyList", historyList);
+		// 使用pageInfo来封装list集合
+		// 因为它里面封装了可在页面使用的数据信息（包括详细的分页信息及查询到的数据）,传入分页导航栏显示的页码数
+		PageInfo<Movie> page = new PageInfo<Movie>(historyList,5);
+		
+		return Message.success().add("historyList", page);
 		
 	}
 	

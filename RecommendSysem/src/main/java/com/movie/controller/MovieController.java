@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -44,8 +45,8 @@ public class MovieController {
 		// 因为它里面封装了可在页面使用的数据信息（包括详细的分页信息及查询到的数据）,传入分页导航栏显示的页码数
 		PageInfo<Movie> page = new PageInfo<Movie>(movieList,5);
 		
-	
 		return Message.success().add("movieList", page);
+	
 	}
 	
 	/**
@@ -82,8 +83,29 @@ public class MovieController {
 	 * 根据电影名称获取电影信息列表（模糊查询）
 	 * @return
 	 */
+	@RequestMapping(value="/searchList1",method=RequestMethod.POST)
+	@ResponseBody
+	public Message searchList1(@RequestParam(value="pageNumber",defaultValue="1") Integer pageNumber,@RequestParam(value="mName")String mName) {
+		// 在查询之前调用，传入页码、以及每页大小
+		PageHelper.startPage(pageNumber, 30);
+		
+		// 该list封装了查询到的所有电影信息
+		List<Movie> searchList = movieService.getSearchList(mName);
+		
+		// 使用pageInfo来封装list集合
+		// 因为它里面封装了可在页面使用的数据信息（包括详细的分页信息及查询到的数据）,传入分页导航栏显示的页码数
+		PageInfo<Movie> page = new PageInfo<Movie>(searchList,5);
+		
+		return Message.success().add("searchList", page);
+	}
+	
+	/**
+	 * 根据电影名称获取电影信息列表（模糊查询）
+	 * @return
+	 */
 	@RequestMapping("/searchList")
 	public String searchList(Movie movie,Model model) {
+				
 		// 该list封装了查询到的所有电影信息
 		List<Movie> searchList = movieService.getSearchList(movie.getmName());
 		model.addAttribute("movieList", searchList);

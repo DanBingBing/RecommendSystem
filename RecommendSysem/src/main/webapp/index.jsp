@@ -78,9 +78,9 @@
             </a>
         </div>
         <div class="w3_search">
-            <form id="searchForm" action="${PROJECT_PATH }/movie/searchList" method="post">
+            <form id="searchForm" action="">
                 <input type="text" name="mName" id="search" placeholder="请输入电影名称" required="">
-                <input type="submit" value="搜索">
+                <input type="button" value="搜索" onclick="searchMovie();">
             </form>
         </div>
         <div class="w3l_sign_in_register">
@@ -468,7 +468,7 @@ function build_page_nav(result){
 			to_page(1);
 		});
 		prePageLi.click(function(){
-			to_page(result.extend.pageInfo.pageNum - 1);
+			to_page(result.extend.movieList.pageNum - 1);
 		});
 	}
 	// javascript:scroll(0,0);表示点击之后立即回到顶部
@@ -669,6 +669,15 @@ function build_page_nav(result){
 </script>
 
 <script type="text/javascript">
+	function searchMovie() {
+		var name = $("#search").val();
+		// 1.判断搜索框是否为空，不为空进入搜索
+		if (name.length>0) {
+			window.location.href="searchList.jsp?mName="+name;
+		}
+
+	}
+
 	// 通过 v-on:click 绑定的方法可在<script>中直接实现，也可在vue的methods中实现
 	function play_video(movie){
 		window.location.href="single.jsp?mId="+movie.mId;

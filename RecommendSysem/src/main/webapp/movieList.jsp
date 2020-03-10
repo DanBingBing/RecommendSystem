@@ -92,16 +92,16 @@
 			</a>
 		</div>
 		<div class="w3_search">
-			<form id="searchForm" action="${PROJECT_PATH }/movie/searchList" method="post">
+			<form id="searchForm" action="" method="">
 				<input type="text" name="mName" id="search" placeholder="请输入电影名称" required="">
-				<input type="submit" value="搜索">
+				<input type="button" value="搜索" onclick="searchMovie();">
 			</form>
 		</div>
 		<div class="w3l_sign_in_register">
 			<ul>
 				<li id="li">
 					<!-- jstl方法取出session中的数据 -->
-					<a href="#">${sessionScope.user.username }</a>
+					<a href="#" id="username">${sessionScope.user.username }</a>
 				</li>
 			</ul>
 
@@ -128,7 +128,7 @@
 				 id="bs-example-navbar-collapse-1">
 				<nav>
 					<ul class="nav navbar-nav">
-						<li class="active"><a href="${PROJECT_PATH }/index.jsp">首页</a></li>
+						<li class="active"><a href="javascript:;" onclick="toIndex();">首页</a></li>
 						<li><a href="${PROJECT_PATH }/historyList.jsp">观看历史</a></li>
 					</ul>
 				</nav>
@@ -399,7 +399,7 @@ function build_page_nav(result){
 			to_page(1);
 		});
 		prePageLi.click(function(){
-			to_page(result.extend.pageInfo.pageNum - 1);
+			to_page(result.extend.movieList.pageNum - 1);
 		});
 	}
 	// javascript:scroll(0,0);表示点击之后立即回到顶部
@@ -446,23 +446,22 @@ function build_page_nav(result){
 </script>
 
 <script type="text/javascript">
+	function toIndex(){
+		// a标签与input的取文本值、取值函数不同
+		if($.trim($('#username').text())!=""){
+			window.location.href="movieList.jsp";
+		}else{
+			window.location.href="index.jsp";
+		}
+		
+	}
+
 	function searchMovie() {
 		// 1.判断搜索框是否为空，为空不能进行搜索
 		var name = $("#search").val();
 
 		if (name.length>0) {
-			// 2.获取搜索框中的值并传递给后台处理
-			$.ajax({
-				//表单提交时以post方式，否则后台封装的对象是乱码
-				type : "post",
-				url : "${PROJECT_PATH }/movie/searchList",
-				data: $('#searchForm').serialize(),
-				dataType : "json",//接收服务端返回的数据类型
-				async : false,
-				success : function(result) {
-					window.location.href="searchList.jsp";
-				}
-			});
+			window.location.href="searchList.jsp?mName="+name;
 		}
 
 	}
