@@ -88,4 +88,21 @@ public class UserMovieController {
 		
 	}
 	
+	/**
+	 * 根据mId查询user_movie表中是否存在该电影
+	 */
+	@RequestMapping(value="/getSingleMovie",method=RequestMethod.POST)
+	@ResponseBody
+	public Message getSingleMovie(@RequestParam("mId")Integer mId,@RequestParam("uId")Integer uId) {
+		List<UserMovie> list = userMovieService.getSingleMovie(mId,uId);
+		
+		if(list.size()>0) {
+			UserMovie movie = list.get(0);
+			return Message.success().add("movie", movie);
+		}else {
+			return Message.failed();
+		}
+		
+	}
+	
 }

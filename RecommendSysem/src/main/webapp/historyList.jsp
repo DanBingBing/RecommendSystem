@@ -86,7 +86,7 @@
 			<ul>
 				<li id="li">
 					<!-- jstl方法取出session中的数据 -->
-					<a href="#">${sessionScope.user.username }</a>
+					<a href="#" id="username">${sessionScope.user.username }</a>
 				</li>
 			</ul>
 			<input type="hidden" value="${sessionScope.user.id}" id="userId" />
@@ -113,7 +113,7 @@
 				 id="bs-example-navbar-collapse-1">
 				<nav>
 					<ul class="nav navbar-nav">
-						<li><a href="movieList.jsp">首页</a></li>
+						<li><a href="javascript:;" onclick="toIndex();">首页</a></li>
 						<li class="active"><a href="historyList.jsp">观看历史</a></li>
 					</ul>
 				</nav>
@@ -373,6 +373,16 @@ function build_page_nav(result){
 </script>
 
 <script type="text/javascript">
+	function toIndex(){
+		// a标签与input的取文本值、取值函数不同
+		if($.trim($('#username').text())!=""){
+			window.location.href="movieList.jsp";
+		}else{
+			window.location.href="index.jsp";
+		}
+		
+	}
+	
 	function searchMovie() {
 		// 1.判断搜索框是否为空，为空不能进行搜索
 		var name = $("#search").val();

@@ -13,4 +13,6 @@ public interface UserMovieService {
 	public void addMovieToUser(Integer userId, Integer id);
 
 	public List<UserMovie> getHistoryMovies(Integer uId);
+
+	public List<UserMovie> getSingleMovie(Integer mId,Integer uId);
 }

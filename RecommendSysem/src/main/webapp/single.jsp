@@ -75,7 +75,8 @@
 			<div class="w3l_sign_in_register">
 				<ul>
 					<li id="li">
-						<!-- jstl方法取出session中的数据 --> <a href="#">${sessionScope.user.username }</a>
+						<!-- jstl方法取出session中的数据 --> 
+						<a href="#" id="username">${sessionScope.user.username }</a>
 					</li>
 				</ul>
 				<input type="hidden" value="${sessionScope.user.id}" id="userId" />
@@ -101,7 +102,7 @@
 					id="bs-example-navbar-collapse-1">
 					<nav>
 						<ul class="nav navbar-nav">
-							<li class="active"><a href="${PROJECT_PATH }/movieList.jsp">电影列表</a></li>
+							<li class="active"><a href="javascript:;" onclick="toIndex();">首页</a></li>
 
 						</ul>
 					</nav>
@@ -159,7 +160,7 @@
 						<div class="clearfix"></div>
 
 						<div class="all-comments">
-							<div class="all-comments-info">
+							<div class="all-comments-info" id="showGrade">
 								<h3>请为该电影评分</h3>
 								<div class="agile-info-wthree-box">
 									<form action="" id="gradeForm">
@@ -283,13 +284,14 @@
 
 	});
 </script>
-			<!-- //here ends scrolling icon -->
 
-			<script>
+<script>
 //或去url中的参数
 jQuery(document).ready(function() {
 	
 	var mId = getQueryString("mId");
+	
+	var	uId;
 	
 	$.ajax({
         type : "post",
@@ -310,7 +312,7 @@ jQuery(document).ready(function() {
             	methods:{
             		playVideo(){
             			if($.trim($('#userId').val())!=""){
-            				var uId = $('#userId').val();
+            				uId = $('#userId').val();
             				
             				$.ajax({
                 		        type : "post",
@@ -352,16 +354,41 @@ jQuery(document).ready(function() {
         	//window.location.href="500.jsp";
         }
     });
+	
+	if($.trim($('#userId').val())!=""){
+		uId = $('#userId').val();
+
+		getSingleMovie(mId,uId);
+	}
+		
 });
-//获取url上的参数
-function getQueryString(name) {
-    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
-    var r = window.location.search.substr(1).match(reg);
-    if (r != null) {
-        return decodeURIComponent(r[2]);
-    }else{
-        return null;
-    }
+
+</script>
+
+<script>
+function getSingleMovie(mId,uId){
+	$.ajax({
+        type : "post",
+        url : "${PROJECT_PATH }/userMovie/getSingleMovie",
+        dataType : "json",//接收服务端返回的数据类型
+        data : {"mId":mId,"uId":uId},
+        success : function(result) {
+        	console.log(result);
+        	// 如果后台传递过来的的是list集合，不能直接 result.extend.movie.movGrade 取出,因为movie是数组
+        	// vue中能取，是vue做了处理
+            if(result.code==200){
+            	// 清空之前的显示的信息
+                $("#showGrade").empty();
+                $("#showGrade").append($("<h3></h3>").append("我的评分"));
+                $("#showGrade").append($("<input />").attr("type","text").val(result.extend.movie.movGrade).attr("readonly","readonly"));
+	
+            }
+        },
+        error : function() {
+        	console.log("服务端出现异常！");
+        	//window.location.href="500.jsp";
+        }
+    });
 }
 
 function grade(){
@@ -403,6 +430,29 @@ function grade(){
 	    $("#message").append("请先登录！").attr("style","color:red;");
 	}
 	
+}
+</script>
+
+<script>
+function toIndex(){
+	// a标签与input的取文本值、取值函数不同
+	if($.trim($('#username').text())!=""){
+		window.location.href="movieList.jsp";
+	}else{
+		window.location.href="index.jsp";
+	}
+	
+}
+
+//获取url上的参数
+function getQueryString(name) {
+    var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) {
+        return decodeURIComponent(r[2]);
+    }else{
+        return null;
+    }
 }
 </script>
 </body>

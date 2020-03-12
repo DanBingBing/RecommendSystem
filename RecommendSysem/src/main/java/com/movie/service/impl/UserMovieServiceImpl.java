@@ -64,4 +64,17 @@ public class UserMovieServiceImpl implements UserMovieService {
 		return userMovieMapper.selectByExample(userMovieExample);
 	}
 
+	/**
+	 * 根据mId查询user_movie表中是否存在该电影
+	 */
+	@Override
+	public List<UserMovie> getSingleMovie(Integer mId,Integer uId) {
+		UserMovieExample userMovieExample = new UserMovieExample();
+		// 连个参数条件一起写是与关系（数据唯一），分开写是或关系（查到多条数据）
+		userMovieExample.createCriteria().andMovIdEqualTo(mId).andUserIdEqualTo(uId);
+		
+		List<UserMovie> list = userMovieMapper.selectByExample(userMovieExample);
+		return list;
+	}
+
 }
