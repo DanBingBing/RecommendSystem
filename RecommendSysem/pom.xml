@@ -125,6 +125,14 @@
 		<artifactId>jackson-databind</artifactId>
 		<version>2.8.8</version>
 	</dependency>
+	
+	<!-- 定时启动某个方法，还需配置xml -->
+	<dependency>
+    	<groupId>aopalliance</groupId>
+    	<artifactId>aopalliance</artifactId>
+    	<version>1.0</version>
+	</dependency>
+	
     
     <!-- 格式化对象，方便输出日志 -->  
      <dependency>  

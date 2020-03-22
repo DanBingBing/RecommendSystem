@@ -3,7 +3,9 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:aop="http://www.springframework.org/schema/aop"
-       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:tx="http://www.springframework.org/schema/tx" 
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:task="http://www.springframework.org/schema/task"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans.xsd
 	http://www.springframework.org/schema/context
@@ -11,7 +13,11 @@
 	http://www.springframework.org/schema/aop
 	http://www.springframework.org/schema/aop/spring-aop.xsd
 	http://www.springframework.org/schema/tx
-	http://www.springframework.org/schema/tx/spring-tx.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+	http://www.springframework.org/schema/tx/spring-tx.xsd 
+	http://www.springframework.org/schema/mvc 
+	http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/task
+    http://www.springframework.org/schema/task/spring-task.xsd"> 
 
     <!--静态资源解析包括 ：js、css、img、..-->
     <!--<mvc:resources mapping="/js/" location="/js/**"/>-->
@@ -25,8 +31,8 @@
 	<!-- 可使用JSR303校验、快捷的ajax请求、映射动态请求等 -->
     <mvc:annotation-driven />
 
-    <!--扫描com.movie下的所有包，除了 controller包以外-->
-    <context:component-scan base-package="com.movie" use-default-filters="false">
+    <!--扫描com.movie下的所有包，除了带有 @ 的类所在的包以外（use-default-filters="false"）-->
+    <context:component-scan base-package="com.movie" >
     	<!-- 扫描控制器 -->
     	<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     	<!-- 扫描service,这里可以配置，但一般在别的配置文件中配置 -->
@@ -42,5 +48,10 @@
         <property name="prefix" value="/"/>
         <property name="suffix" value=".jsp"/>
     </bean>
+    
+    <!-- 配置定时器（采用注解方式定时启动某个方法） -->
+    <task:executor id="executor" pool-size="5" />    
+    <task:scheduler id="scheduler" pool-size="10" />    
+    <task:annotation-driven executor="executor" scheduler="scheduler" />  
 
 </beans>

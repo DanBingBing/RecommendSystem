@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 
 import com.movie.pojo.MovieTagMessage;
+import com.movie.pojo.UserMovie;
 
 /**
  * 删除 list 集合中重复的元素
@@ -19,7 +20,7 @@ import com.movie.pojo.MovieTagMessage;
 public class RemoveDuplicateUtil {
 
 	/**
-	 * list中的每条数据都不同，该方法不适用这种情况
+	 * list集合数据去重
 	 * @param list
 	 * @return
 	 */
@@ -31,6 +32,11 @@ public class RemoveDuplicateUtil {
 	    return list;
 	}
 	
+	/**
+	 * 根据list中的字段去重
+	 * @param list
+	 * @return
+	 */
 	public static List<MovieTagMessage> removeDuplicate1(List<MovieTagMessage> list) {
 	    
 		List<MovieTagMessage> list2 = new ArrayList<>();
@@ -45,6 +51,15 @@ public class RemoveDuplicateUtil {
 		}*/
 		
 		list2 = list.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(MovieTagMessage :: getMovId))), ArrayList::new));
+		
+	    return list2;
+	}
+	
+	public static List<UserMovie> removeDuplicate2(List<UserMovie> list) {
+	    
+		List<UserMovie> list2 = new ArrayList<>();
+		
+		list2 = list.stream().collect(Collectors.collectingAndThen(Collectors.toCollection(() -> new TreeSet<>(Comparator.comparing(UserMovie :: getUserId))), ArrayList::new));
 		
 	    return list2;
 	}

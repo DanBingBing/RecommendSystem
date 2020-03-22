@@ -77,4 +77,14 @@ public class UserMovieServiceImpl implements UserMovieService {
 		return list;
 	}
 
+	/**
+	 * 查询user_movie表中的所有信息
+	 */
+	@Override
+	public List<UserMovie> getUserMovies() {
+
+		List<UserMovie> list = userMovieMapper.selectByExample(null);
+		return list;
+	}
+
 }

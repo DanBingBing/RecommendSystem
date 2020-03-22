@@ -66,10 +66,9 @@
 					</h1></a>
 			</div>
 			<div class="w3_search">
-				<form id="searchForm" action="${PROJECT_PATH }/movie/searchList"
-					method="post">
-					<input type="text" name="mName" id="search" placeholder="请输入电影名称"
-						required=""> <input type="submit" value="搜索">
+				<form id="searchForm" action="">
+					<input type="text" name="mName" id="search" placeholder="请输入电影名称" required="">
+                	<input type="button" value="搜索" onclick="searchMovie();">
 				</form>
 			</div>
 			<div class="w3l_sign_in_register">
@@ -434,6 +433,15 @@ function grade(){
 </script>
 
 <script>
+function searchMovie() {
+	var name = $("#search").val();
+	// 1.判断搜索框是否为空，不为空进入搜索
+	if (name.length>0) {
+		window.location.href="searchList.jsp?mName="+name;
+	}
+
+}
+
 function toIndex(){
 	// a标签与input的取文本值、取值函数不同
 	if($.trim($('#username').text())!=""){

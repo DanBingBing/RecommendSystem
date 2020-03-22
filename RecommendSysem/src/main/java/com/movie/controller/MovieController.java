@@ -20,6 +20,11 @@ import com.movie.pojo.MovieTagMessage;
 import com.movie.service.MovieService;
 import com.movie.utils.JsonUtil;
 
+/**
+ * 电影相关操作控制器
+ * @author danbingbing
+ *
+ */
 @Controller
 @RequestMapping("/movie")
 public class MovieController {
@@ -129,12 +134,13 @@ public class MovieController {
 
 		String[][] tagStr = new String[m][2];
 
-		// 将相同电影的单个标签合并
+		// 将相同电影的单个标签取出保存到数组中
 		for (int i = 0; i < m; i++) {
 			for (int j = 0; j < m; j++) {
 				if (i != j) {
 					if (movieList.get(i).getMovId() == movieList.get(j).getMovId()) {
 						tagStr[j][1] = movieList.get(j).getMovieTag().getMtName();
+						// 需将int类型的id转为String
 						tagStr[j][0] = movieList.get(j).getMovId() + "";
 					}
 				} else {
@@ -150,12 +156,13 @@ public class MovieController {
 
 		String tag = "";
 
-		// 将处理过的标签重新添加到对应的电影信息中
+		// 将数组中的单个标签按相同Id合并重新添加到对应的电影信息中
 		for (int i = 0; i < list.size(); i++) {
-
+			// 此处 tagStr.length == list.size()
 			for (int j = 0; j < list.size(); j++) {
 				if (list.get(i).getMovId() == Integer.parseInt(tagStr[j][0])) {
 					tag += (tagStr[j][1] + " ");
+					// 为同一部电影多次设置标签名称
 					list.get(i).getMovieTag().setMtName(tag);
 					// System.out.println(tag);
 				} else {

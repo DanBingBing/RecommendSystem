@@ -19,6 +19,11 @@ import com.movie.pojo.UserMovie;
 import com.movie.service.MovieService;
 import com.movie.service.UserMovieService;
 
+/**
+ * 用户对电影的相关操作控制器
+ * @author danbingbing
+ *
+ */
 @Controller
 @RequestMapping("/userMovie")
 public class UserMovieController {

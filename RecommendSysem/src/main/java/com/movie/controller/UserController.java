@@ -14,6 +14,11 @@ import com.movie.pojo.User;
 import com.movie.service.UserService;
 import com.movie.utils.Message;
 
+/**
+ * 用户相关操作控制器
+ * @author danbingbing
+ *
+ */
 @Controller
 @RequestMapping("/user")
 public class UserController {
