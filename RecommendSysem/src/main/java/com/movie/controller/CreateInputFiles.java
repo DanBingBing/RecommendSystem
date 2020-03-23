@@ -42,7 +42,7 @@ public class CreateInputFiles {
 	 * 电影特征提取并保存到ItemProfile.txt文件
 	 */
 	// 表示服务器启动的时候立即执行，之后每30分钟执行一次  
-    @Scheduled(fixedRate=18000000) 
+    //@Scheduled(fixedRate=18000000) 
 	public void getMovieFeature() {
 		List<Movie> movies = movieService.getMovieList();
 		
@@ -88,7 +88,7 @@ public class CreateInputFiles {
      * 用户对看过的电影评分记录提取并保存到ItemUser.txt文件
      */
     // 表示服务器启动的时候立即执行，之后每30分钟执行一次  
-    @Scheduled(fixedRate=18000000) 
+    //@Scheduled(fixedRate=18000000) 
 	public void getUserGrade() {
     	
 		List<UserMovie> userMovies = userMovieService.getUserMovies();

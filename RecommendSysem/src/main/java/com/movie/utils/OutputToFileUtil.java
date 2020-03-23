@@ -11,7 +11,7 @@ import java.util.List;
 public class OutputToFileUtil {
 	
 	/**
-	 * 新数据覆盖就数据
+	 * 新数据覆盖旧数据
 	 * 
 	 * @param dataList
 	 * @param fileName

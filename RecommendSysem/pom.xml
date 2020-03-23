@@ -6,6 +6,33 @@
   <packaging>war</packaging>
   
   <dependencies>
+  	<dependency>
+      <groupId>org.apache.hadoop</groupId>
+      <artifactId>hadoop-hdfs</artifactId>
+      <version>2.7.1</version>
+      <exclusions>
+      	<exclusion>
+      		<groupId>javax.servlet</groupId>
+      		<artifactId>servlet-api</artifactId>
+      	</exclusion>
+      </exclusions>
+    </dependency>
+    
+	<dependency>
+    	<groupId>org.apache.hadoop</groupId>
+    	<artifactId>hadoop-client</artifactId>
+    	<version>2.7.1</version>
+    	<exclusions>
+    		<exclusion>
+    			<groupId>javax.servlet</groupId>
+    			<artifactId>servlet-api</artifactId>
+    		</exclusion>
+    		<exclusion>
+    			<groupId>javax.servlet.jsp</groupId>
+    			<artifactId>jsp-api</artifactId>
+    		</exclusion>
+    	</exclusions>
+	</dependency>
   
   	<!--springMVC,spring-->
     <dependency>
@@ -99,13 +126,6 @@
       <version>5.4.1.Final</version>
     </dependency>
     
-    <!-- junit -->
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.12</version>
-    </dependency>
-    
     <!-- 引入PageHelper分页插件 -->
     <!-- 该版本中使用getList()的方法时获取不到从数据库中获取的封装到list集合中的信息 -->
     <!-- <dependency>
@@ -153,9 +173,69 @@
 	    <groupId>org.apache.maven.plugins</groupId>
 	    <artifactId>maven-resources-plugin</artifactId>
 	    <version>2.4.3</version>
+	    <exclusions>
+	    	<exclusion>
+	    		<groupId>com.jcraft</groupId>
+	    		<artifactId>jsch</artifactId>
+	    	</exclusion>
+	    	<exclusion>
+	    		<groupId>jtidy</groupId>
+	    		<artifactId>jtidy</artifactId>
+	    	</exclusion>
+	    	<exclusion>
+	    		<groupId>org.apache.maven.wagon</groupId>
+	    		<artifactId>wagon-file</artifactId>
+	    	</exclusion>
+	    	<exclusion>
+	    		<groupId>org.apache.maven.wagon</groupId>
+	    		<artifactId>wagon-http-lightweight</artifactId>
+	    	</exclusion>
+	    	<exclusion>
+	    		<groupId>org.apache.maven.wagon</groupId>
+	    		<artifactId>wagon-http-shared</artifactId>
+	    	</exclusion>
+	    	<exclusion>
+	    		<groupId>org.apache.maven.wagon</groupId>
+	    		<artifactId>wagon-ssh</artifactId>
+	    	</exclusion>
+	    	<exclusion>
+	    		<groupId>org.apache.maven.wagon</groupId>
+	    		<artifactId>wagon-ssh-common</artifactId>
+	    	</exclusion>
+	    	<exclusion>
+	    		<groupId>org.apache.maven.wagon</groupId>
+	    		<artifactId>wagon-ssh-external</artifactId>
+	    	</exclusion>
+	    </exclusions>
 	</dependency>
+	
+	<!-- junit -->
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+    </dependency>
     
   </dependencies>
+  
+  <pluginRepositories>
+        <pluginRepository>
+            <id>alfresco-public</id>
+            <url>https://artifacts.alfresco.com/nexus/content/groups/public</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>alfresco-public-snapshots</id>
+            <url>https://artifacts.alfresco.com/nexus/content/groups/public-snapshots</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>daily</updatePolicy>
+            </snapshots>
+        </pluginRepository>
+        <pluginRepository>
+            <id>beardedgeeks-releases</id>
+            <url>http://beardedgeeks.googlecode.com/svn/repository/releases</url>
+        </pluginRepository>
+	</pluginRepositories>
    
   <build>
 	  <plugins>
@@ -172,13 +252,13 @@
 	      </plugin>
 	      
 	      <!-- 配置Tomcat插件 -->
-			<plugin>
+		  <plugin>
 				<groupId>org.apache.tomcat.maven</groupId>
 				<artifactId>tomcat7-maven-plugin</artifactId>
 				<version>2.2</version>
 				<configuration>
 					<port>8800</port>
-					<!-- 默认有，加上 / 表示访问路径没有项目名：http://localhost:8800/index.jsp -->
+					<!-- 默认访问路径有项目名，加上 / 表示没有 -->
 					<!-- <path>/</path> -->
 				</configuration>
 			</plugin>
