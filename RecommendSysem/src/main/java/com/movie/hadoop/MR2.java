@@ -36,9 +36,10 @@ public class MR2 {
 			// 添加分布式缓存文件
 			job.addCacheArchive(new URI(cache + "#itemUserScore1"));
 
-			// 配置任务map和reduce类
+			// 运行 MR2 类
 			job.setJarByClass(MR2.class);
-			// job.setJar("F:\\eclipseworkspace\\content\\content.jar");
+			
+			// 配置任务map和reduce类
 			job.setMapperClass(Mapper2.class);
 			job.setReducerClass(Reducer2.class);
 
@@ -77,7 +78,7 @@ public class MR2 {
 		result = new MR2().run();
 		if (result == 1) {
 			System.out.println("step2运行成功");
-			
+			// 开始第三步
 			MR3.step3();
 		} else if (result == -1) {
 			System.out.println("step2运行失败");

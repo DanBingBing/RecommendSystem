@@ -67,7 +67,7 @@ public class MR1 {
 		result = new MR1().run();
 		if (result == 1) {
 			System.out.println("step1运行成功");
-			
+			// 开始第二步
 			MR2.step2();
 		} else if (result == -1) {
 			System.out.println("step1运行失败");

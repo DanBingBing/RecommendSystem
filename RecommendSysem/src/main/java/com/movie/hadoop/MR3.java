@@ -36,9 +36,10 @@ public class MR3 {
 			// 添加分布式缓存文件
 			job.addCacheArchive(new URI(cache + "#itemUserScore2"));
 
-			// 配置任务map和reduce类
+			// 运行 MR3 类
 			job.setJarByClass(MR3.class);
-			// job.setJar("F:\\eclipseworkspace\\content\\content.jar");
+			
+			// 配置任务map和reduce类
 			job.setMapperClass(Mapper3.class);
 			job.setReducerClass(Reducer3.class);
 
