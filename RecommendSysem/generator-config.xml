@@ -55,5 +55,6 @@
     <table tableName="mov_tag_mov" domainObjectName="MovieTagMessage" ></table>
     <table tableName="mov_performer" domainObjectName="MoviePerformer" ></table>
     <table tableName="mov_performer_mov" domainObjectName="MoviePerformerMessage" ></table>
+    <table tableName="recommend_movie" domainObjectName="RecommendMovie" ></table>
   </context>
 </generatorConfiguration>

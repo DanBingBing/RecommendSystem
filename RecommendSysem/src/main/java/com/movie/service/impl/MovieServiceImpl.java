@@ -24,9 +24,6 @@ public class MovieServiceImpl implements MovieService {
 	@Autowired
 	private MovieMapper movieMapper;
 	
-	@Autowired
-	private UserMovieMapper UserMovieMapper;
-	
 	/**
 	 * 三张表的级联查询(movie mov_tag mov_tag_mov)
 	 * 		用于初始化电影综合标签信息(mTag)
