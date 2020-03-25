@@ -8,7 +8,7 @@ import com.movie.utils.HDFSFileOperationUtil;
 @Controller
 public class StartupRecommend {
 	
-	@Scheduled(fixedRate=18000000)
+	//@Scheduled(fixedRate=18000000)
 	public void startupRecommend() throws Exception {
 		// 上传电影特征文件(上传到HDFS的路径，上传的文件)
 		HDFSFileOperationUtil.uploadFile("hdfs://127.0.0.1:9000/context/step1_input/", "ItemProfile.txt");
