@@ -71,20 +71,6 @@ public class MovieController {
 	}
 	
 	/**
-	 * 获取推荐电影信息列表
-	 * @return
-	 */
-	@RequestMapping("/recommendList")
-	@ResponseBody
-	public Message recommendList() {
-		
-		// 该list封装了所有的电影信息
-		List<Movie> movieList = movieService.getMovieList();
-	
-		return Message.success().add("movieList", movieList);
-	}
-	
-	/**
 	 * 根据电影名称获取电影信息列表（模糊查询）
 	 * @return
 	 */

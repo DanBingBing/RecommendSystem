@@ -93,8 +93,6 @@ public class FileSaveToListUtil {
 			movieList.add(movie);
 		}
 		
-		// 调用对象集合排序工具类对集合中的 recommend_grade 进行降序排列
-		//SortListUtil.sort(movieList, "recGrade", SortListUtil.DESC);
 		return movieList;
         
 	}

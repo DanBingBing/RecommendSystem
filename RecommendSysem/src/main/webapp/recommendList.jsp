@@ -104,7 +104,7 @@
 					<a href="#" id="username">${sessionScope.user.username }</a>
 				</li>
 			</ul>
-
+			<input type="hidden" value="${sessionScope.user.id}" id="userId" />
 		</div>
 		<div class="clearfix"></div>
 	</div>
@@ -128,8 +128,8 @@
 				 id="bs-example-navbar-collapse-1">
 				<nav>
 					<ul class="nav navbar-nav">
-						<li class="active"><a href="javascript:;" onclick="toIndex();">首页</a></li>
-						<li><a href="javascript:;" onclick="toRecommend();">推荐电影</a></li>
+						<li><a href="javascript:;" onclick="toIndex();">首页</a></li>
+						<li class="active"><a href="javascript:;" onclick="toRecommend();">推荐电影</a></li>
 						<li><a href="${PROJECT_PATH }/historyList.jsp">观看历史</a></li>
 					</ul>
 				</nav>
@@ -349,29 +349,34 @@ var v1 = new Vue({
 
 function to_page(pn){
 	var result;
-	$.ajax({
-		type : "GET",
-		url : "${PROJECT_PATH }/movie/movieList",
-		data:"pageNumber="+pn,
-		dataType : "json",//接收服务端返回的数据类型
-		async : false,
-		success : function(data) {
-			console.log(data);
-			// 把ajax的请求域vue的渲染数据分离
-			result = data;
-			
-		},
-		error : function() {
-			console.log("服务端出现异常！");
-			//window.location.href="500.jsp";
-		}
-	});
-	// 将ajax请求数据与vue渲染数据分离，vue不能定义在success函数中
-	// 1.解析json并显示电影数据(这里必须将数据赋值给vue中的data)
-	build_movie_table(result);
-	
-	// 3.解析json并显示分页条信息
-	build_page_nav(result);
+	if($.trim($('#userId').val())!=""){
+		var uId = $('#userId').val();
+		
+		$.ajax({
+			type : "post",
+			url : "${PROJECT_PATH }/recommend/recommendList",
+			data:{"pageNumber":pn,"uId":uId},
+			dataType : "json",//接收服务端返回的数据类型
+			async : false,
+			success : function(data) {
+				console.log(data);
+				// 把ajax的请求域vue的渲染数据分离
+				result = data;
+				
+			},
+			error : function() {
+				console.log("服务端出现异常！");
+				//window.location.href="500.jsp";
+			}
+		});
+		// 将ajax请求数据与vue渲染数据分离，vue不能定义在success函数中
+		// 1.解析json并显示电影数据(这里必须将数据赋值给vue中的data)
+		build_movie_table(result);
+		
+		// 3.解析json并显示分页条信息
+		build_page_nav(result);	
+
+	}
 }
 
 function build_movie_table(result){
