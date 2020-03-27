@@ -381,9 +381,9 @@ function to_page(pn){
 
 function build_movie_table(result){
 	
-	v.rows = result.extend.movieList.list;
+	v.rows = result.extend.movieList.pageList;
 	
-	v1.movies = result.extend.movieList.list;
+	v1.movies = result.extend.movieList.pageList;
 	
 }
 
@@ -396,7 +396,7 @@ function build_page_nav(result){
 	var firstPageLi = $("<li></li>").append($("<a></a>").append("首页").attr("href","javascript:scroll(0,0);"));
 	var prePageLi = $("<li></li>").append($("<a></a>").append("&laquo;").attr("href","javascript:scroll(0,0);"));
 	// 判断页码上是否还有前一页，没有则点击a标签不生效
-	if(result.extend.movieList.hasPreviousPage == false){
+	if(result.extend.movieList.hasPrePage == false){
 		firstPageLi.addClass("disabled");
 		prePageLi.addClass("disabled");
 	}else{
@@ -405,7 +405,7 @@ function build_page_nav(result){
 			to_page(1);
 		});
 		prePageLi.click(function(){
-			to_page(result.extend.movieList.pageNum - 1);
+			to_page(result.extend.movieList.previousPage);
 		});
 	}
 	// javascript:scroll(0,0);表示点击之后立即回到顶部
@@ -418,10 +418,10 @@ function build_page_nav(result){
 	}else{
 		// 为下一页、末页添加单击事件
 		nextPageLi.click(function(){
-			to_page(result.extend.movieList.pageNum + 1);
+			to_page(result.extend.movieList.nextPage);
 		});
 		lastPageLi.click(function(){
-			to_page(result.extend.movieList.pages);
+			to_page(result.extend.movieList.totalPage);
 		});
 	}
 	
@@ -432,7 +432,7 @@ function build_page_nav(result){
 	$.each(result.extend.movieList.navigatepageNums,function(index,item){
 		var pageLi = $("<li></li>").append($("<a></a>").append(item).attr("href","javascript:scroll(0,0);"));
 		// 判断当前页是否是传过来的数据中的信息，是则可以点击a标签
-		if(result.extend.movieList.pageNum == item){
+		if(result.extend.movieList.curentPage == item){
 			pageLi.addClass("active");
 		}
 		// 绑定单击事件，获取对应页码的数据

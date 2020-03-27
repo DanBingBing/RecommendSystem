@@ -146,7 +146,7 @@
 			<!--/browse-agile-w3ls -->
 			<div class="browse-agile-w3ls general-w3ls">
 				<div class="tittle-head">
-					<h4 class="latest-text">推荐电影</h4>
+					<h4 class="latest-text">电影库</h4>
 					<div class="container">
 						<div class="agileits-single-top">
 							<ol class="breadcrumb">

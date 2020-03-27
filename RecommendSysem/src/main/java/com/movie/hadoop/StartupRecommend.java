@@ -20,13 +20,5 @@ public class StartupRecommend {
 		HDFSFileOperationUtil.downloadFile("hdfs://127.0.0.1:9000/context/step3_output/","part-r-00000");
 		System.out.println("启动推荐成功！");
 	}
-	
-	public void getRecommendList() throws Exception {
-		String path = System.getProperty("user.dir");
-		// 读取该项目路径下的 RecommendResult.txt 文件
-		
-		
-		// 返回推荐列表
-	}
 
 }

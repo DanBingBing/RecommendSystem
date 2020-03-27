@@ -18,6 +18,8 @@ import com.movie.pojo.RecommendMovie;
 import com.movie.service.MovieService;
 import com.movie.service.RecommendMovieService;
 import com.movie.utils.FileSaveToListUtil;
+import com.movie.utils.JsonUtil;
+import com.movie.utils.ListPagerUtil;
 import com.movie.utils.Message;
 import com.movie.utils.SortListUtil;
 
@@ -57,22 +59,19 @@ public class RecommendMovieController {
 
 		// 调用对象集合排序工具类对集合中的 recGrade 进行降序排列
 		SortListUtil.sort(list, "recGrade", SortListUtil.DESC);
-				
-		// 在查询之前调用，传入页码、以及每页大小(此时无效了)
-		PageHelper.startPage(pageNumber, 30);
 		
 		// 该list封装了所有的电影信息
 		List<Movie> movieList = new ArrayList<>();
 		
 		for(int i=0;i<list.size();i++) {
-			System.out.println(list.get(i).getUserId()+": "+list.get(i).getMovId()+": "+list.get(i).getRecGrade());
 			movieList.add(movieService.getSingle(list.get(i).getMovId()));
 		}
-
-		// 使用pageInfo来封装list集合
-		// 因为它里面封装了可在页面使用的数据信息（包括详细的分页信息及查询到的数据）,传入分页导航栏显示的页码数
-		PageInfo<Movie> page = new PageInfo<Movie>(movieList,5);
 		
+		// 调用自定义的集合分页工具，传入参数要分页的集合、页码、以及每页大小
+		// （伪分页，表示依然要从数据库查询所有的数据保存到集合中，对集合进行分页，主要用于信息量不大的数据）
+		ListPagerUtil<Movie> page = new ListPagerUtil<Movie>(movieList,pageNumber,30);
+				
+		System.out.println(JsonUtil.objectToJson(page));
 		return Message.success().add("movieList", page);
 	
 	}
