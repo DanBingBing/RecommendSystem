@@ -21,7 +21,8 @@ public class Mapper3 extends Mapper<LongWritable, Text, Text, Text> {
 	// 右矩阵列值 下标右行 右值
 	// private Map<String,String[]> cacheMap = new HashMap<>();
 
-	private DecimalFormat df = new DecimalFormat("0.00");
+	// 设置推荐评分输出数据的格式
+	private DecimalFormat df = new DecimalFormat("0.000");
 
 	/**
 	 * 在map执行之前会执行这个方法，只会执行一次

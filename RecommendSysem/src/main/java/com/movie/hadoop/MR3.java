@@ -9,21 +9,28 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 /**
  * cos<步骤1输入,步骤2输出>
  */
-public class MR3 {
+public class MR3 extends TextOutputFormat{
 	private static String inputPath = "/context/step1_input";
 	private static String outputPath = "/context/step3_output";
 	// 将step1中输出的转置矩阵作为全局缓存
-	private static String cache = "/context/step2_output/part-r-00000";
+	private static String cache;
 
 	private static String hdfs = "hdfs://127.0.0.1:9000";
+	
+	// 重写输出文件命名方法
+	protected static void setPutputName(JobContext job,String name) {
+		job.getConfiguration().set(BASE_OUTPUT_NAME, name);
+	}
 
-	public int run() {
+	public int run(String resultFilename) {
 		try {
 			Configuration conf = new Configuration();
 			conf.set("fs.defaultFS", hdfs);
@@ -36,10 +43,11 @@ public class MR3 {
 			// 添加分布式缓存文件
 			job.addCacheArchive(new URI(cache + "#itemUserScore2"));
 
-			// 运行 MR3 类
-			job.setJarByClass(MR3.class);
-			
 			// 配置任务map和reduce类
+			job.setJarByClass(MR3.class);
+			// 设置生成文件的名字
+			MR3.setPutputName(job, resultFilename);
+
 			job.setMapperClass(Mapper3.class);
 			job.setReducerClass(Reducer3.class);
 
@@ -48,7 +56,7 @@ public class MR3 {
 
 			job.setOutputKeyClass(Text.class);
 			job.setOutputValueClass(Text.class);
-
+			
 			FileSystem fs = FileSystem.get(conf);
 			Path inpath = new Path(inputPath);
 			if (fs.exists(inpath)) {
@@ -73,13 +81,17 @@ public class MR3 {
 		return -1;
 	}
 
-	public static void step3() throws IOException, ClassNotFoundException, InterruptedException {
+	public static void step3(String resultFilename, String cacheName) throws IOException, ClassNotFoundException, InterruptedException {
+		// 先为step2中生成的全局缓存文件命名赋值给变量，方便读取使用
+		cache = "/context/step2_output/"+cacheName;
+				
 		int result = -1;
-		result = new MR3().run();
+		result = new MR3().run(resultFilename);
 		if (result == 1) {
 			System.out.println("step3运行成功");
 		} else if (result == -1) {
 			System.out.println("step3运行失败");
 		}
 	}
+	
 }

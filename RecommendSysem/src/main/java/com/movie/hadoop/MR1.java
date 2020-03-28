@@ -7,20 +7,27 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.junit.Test;
 
 /**
  * 
  * 将item profile转置
  */
-public class MR1 {
+public class MR1 extends TextOutputFormat{
 	private static String inputPath = "/context/step1_input";
 	private static String outputPath = "/context/step1_output";
 	private static String hdfs = "hdfs://127.0.0.1:9000";
+	
+	// 重写输出文件命名方法，不然生成的所有文件都是一个名字
+	protected static void setPutputName(JobContext job,String name) {
+		job.getConfiguration().set(BASE_OUTPUT_NAME, name);
+	}
 
-	public int run() {
+	public int run(String resultFilename) {
 		try {
 			Configuration conf = new Configuration();
 			conf.set("fs.defaultFS", hdfs);
@@ -28,7 +35,9 @@ public class MR1 {
 
 			// 运行 MR1 类
 			job.setJarByClass(MR1.class);
-
+			// 设置生成文件的名字
+			MR1.setPutputName(job, resultFilename);
+			
 			// 设置 map
 			job.setMapperClass(Mapper1.class);
 			job.setMapOutputKeyClass(Text.class);
@@ -62,13 +71,11 @@ public class MR1 {
 		return -1;
 	}
 
-	public static void step1() throws IOException, ClassNotFoundException, InterruptedException {
+	public static void step1(String resultFilename) throws IOException, ClassNotFoundException, InterruptedException {
 		int result = -1;
-		result = new MR1().run();
+		result = new MR1().run(resultFilename);
 		if (result == 1) {
 			System.out.println("step1运行成功");
-			// 开始第二步
-			MR2.step2();
 		} else if (result == -1) {
 			System.out.println("step1运行失败");
 		}

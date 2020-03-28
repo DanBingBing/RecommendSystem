@@ -13,11 +13,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.movie.fileOperation.CreateUserInputFiles;
+import com.movie.fileOperation.FileSaveToList;
+import com.movie.fileOperation.HDFSFileOperation;
+import com.movie.hadoop.StartupRecommend;
 import com.movie.pojo.Movie;
+import com.movie.pojo.MovieTag;
 import com.movie.pojo.RecommendMovie;
+import com.movie.pojo.UserMovie;
 import com.movie.service.MovieService;
 import com.movie.service.RecommendMovieService;
-import com.movie.utils.FileSaveToListUtil;
+import com.movie.service.TagService;
+import com.movie.service.UserMovieService;
 import com.movie.utils.JsonUtil;
 import com.movie.utils.ListPagerUtil;
 import com.movie.utils.Message;
@@ -33,19 +40,11 @@ public class RecommendMovieController {
 	@Autowired
 	private MovieService movieService;
 	
-	//@Scheduled(fixedRate=18000000) 
-	public Message getRecommendMovies() throws Exception {
-		
-		List<RecommendMovie> list = FileSaveToListUtil.getRecommendList();
-		  
-		for(int i=0;i<list.size();i++) {
-			recommendMovieService.addAllRecommendMovie(list.get(i)); 
-		}
-		 
-		System.out.println("保存成功！");
-		
-		return null;
-	}
+	@Autowired
+	private TagService tagService;
+	
+	@Autowired
+	private UserMovieService userMovieService;
 	
 	/**
 	 * 获取推荐电影信息列表
@@ -76,4 +75,43 @@ public class RecommendMovieController {
 	
 	}
 	
+	/**
+	 * 当用户观看了新电影并评分后刷新推荐电影
+	 * @return
+	 * @throws Exception 
+	 */
+	@RequestMapping(value="/refreshRecommend",method=RequestMethod.POST)
+	@ResponseBody
+	public Message refreshRecommend(@RequestParam("uId")Integer uId) throws Exception {
+		// 从数据库中删除用户旧的推荐信息
+		recommendMovieService.deleteAllRecommendMovieByUserId(1);
+		// 从数据库中删除用户旧的推荐信息
+		recommendMovieService.deleteAllRecommendMovieByUserId(2);
+		
+		// 生成电影特征文件
+		List<Movie> movies = movieService.getMovieList();
+		List<MovieTag> tags = tagService.getTags();
+		CreateUserInputFiles.getMovieFeature(movies, tags, uId);
+		
+		// 生成用户评分文件
+		List<UserMovie> userMovies = userMovieService.getHistoryMovies(uId);
+		CreateUserInputFiles.getUserGrade(userMovies, uId);
+		
+		// 上传电影特征文件、用户评分文件到HDFS,启动推荐，生成推荐结果文件并下载到系统中
+		StartupRecommend.startupRecommend("ItemProfile_"+uId+".txt", "ItemUser_"+uId+".txt", "RecommendResult_"+uId);
+		
+		// 从数据库中删除用户旧的推荐信息
+		recommendMovieService.deleteAllRecommendMovieByUserId(uId);
+		
+		// 处理推荐结果文件并保存到集合中
+		List<RecommendMovie> recommendlist = FileSaveToList.getRecommendList("RecommendResult_"+uId+".txt");
+		
+		// 将新的用户推荐结果保存到数据库
+		for(int i=0;i<recommendlist.size();i++) {
+			recommendMovieService.addAllRecommendMovie(recommendlist.get(i)); 
+		}
+		
+		return Message.success().add("message", "刷新推荐结果成功！");
+	
+	}
 }

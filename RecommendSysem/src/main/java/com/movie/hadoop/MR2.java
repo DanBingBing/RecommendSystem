@@ -9,21 +9,28 @@ import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 
 /**
  * item user (评分矩阵) X item profile（已转置）
  */
-public class MR2 {
+public class MR2 extends TextOutputFormat {
 	private static String inputPath = "/context/step2_input";
 	private static String outputPath = "/context/step2_output";
 	// 将step1中输出的转置矩阵作为全局缓存
-	private static String cache = "/context/step1_output/part-r-00000";
+	private static String cache;
 
 	private static String hdfs = "hdfs://127.0.0.1:9000";
+	
+	// 重写输出文件命名方法
+	protected static void setPutputName(JobContext job,String name) {
+		job.getConfiguration().set(BASE_OUTPUT_NAME, name);
+	}
 
-	public int run() {
+	public int run(String resultFilename) {
 		try {
 			Configuration conf = new Configuration();
 			conf.set("fs.defaultFS", hdfs);
@@ -36,10 +43,11 @@ public class MR2 {
 			// 添加分布式缓存文件
 			job.addCacheArchive(new URI(cache + "#itemUserScore1"));
 
-			// 运行 MR2 类
-			job.setJarByClass(MR2.class);
-			
 			// 配置任务map和reduce类
+			job.setJarByClass(MR2.class);
+			// 设置生成文件的名字
+			MR2.setPutputName(job, resultFilename);
+			
 			job.setMapperClass(Mapper2.class);
 			job.setReducerClass(Reducer2.class);
 
@@ -73,15 +81,17 @@ public class MR2 {
 		return -1;
 	}
 
-	public static void step2() throws IOException, ClassNotFoundException, InterruptedException {
+	public static void step2(String resultFilename,String cacheName) throws IOException, ClassNotFoundException, InterruptedException {
+		// 先为step1中生成的全局缓存文件命名赋值给变量，方便读取使用
+		cache = "/context/step1_output/"+cacheName;
+		
 		int result = -1;
-		result = new MR2().run();
+		result = new MR2().run(resultFilename);
 		if (result == 1) {
 			System.out.println("step2运行成功");
-			// 开始第三步
-			MR3.step3();
 		} else if (result == -1) {
 			System.out.println("step2运行失败");
 		}
 	}
+
 }

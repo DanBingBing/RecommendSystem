@@ -44,8 +44,6 @@ public class ListPagerUtil<T> {
 			} else {
 				this.totalPage = totalRecord / this.pageCount + 1;
 			}
-			//System.out.println(totalRecord);
-			//System.out.println(totalPage);
 		}else {
 			System.out.println("集合不能为空！");
 		}
@@ -106,7 +104,7 @@ public class ListPagerUtil<T> {
 				}
 			
 		}else {
-			sublist.subList(0, totalPage);
+			navigatepageNums = sublist.subList(0, totalPage);
 		}
 		
 	}
@@ -193,7 +191,7 @@ public class ListPagerUtil<T> {
 	@Override
 	public String toString() {
 		return "ListPagerUtil [curentPage=" + curentPage + ", pageCount=" + pageCount
-				+ ", totalPage=" + totalPage + ", totalRecord=" + totalRecord + ", previousPage=" + previousPage
+				+ ", totalPage=" + totalPage +", navigatepageNums="+navigatepageNums+ ", totalRecord=" + totalRecord + ", previousPage=" + previousPage
 				+ ", nextPage=" + nextPage + ", hasPrePage=" + hasPrePage + ", hasNextPage=" + hasNextPage
 				+ ", isFirstPage=" + isFirstPage + ", isLastPage=" + isLastPage + ", pageList=" + pageList + "]";
 	}

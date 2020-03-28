@@ -393,6 +393,7 @@ function getSingleMovie(mId,uId){
 function grade(){
 	
 	var mId = getQueryString("mId");
+	
 	var grade = $('#gradeForm').serialize();
 	
 	if($.trim($('#userId').val())!=""){
@@ -402,7 +403,6 @@ function grade(){
 	        type : "post",
 	        url : "${PROJECT_PATH }/userMovie/grade",
 	        dataType : "json",//接收服务端返回的数据类型
-	        async : false,
 	        //data : {"mId":mId,"mov_grade":mov_grade},
 	        data : {"mov_grade":$('#gradeForm').serialize(),"mId":mId,"uId":uId},
 	        success : function(result) {
@@ -411,6 +411,10 @@ function grade(){
 	            	// 清空之前的显示的信息
 	                $("#message").empty();
 	                $("#message").append(result.extend.msg).attr("style","color:green;");
+	                
+	                // 评分成功后刷新用户的推荐电影信息
+	     			refreshRecommend();           
+	                
 	            }else{
 	            	// 清空之前的显示的信息
 	                $("#message").empty();
@@ -436,7 +440,7 @@ function grade(){
 function searchMovie() {
 	var name = $("#search").val();
 	// 1.判断搜索框是否为空，不为空进入搜索
-	if (name.length>0) {
+	if (name!=''||name!=null) {
 		window.location.href="searchList.jsp?mName="+name;
 	}
 
@@ -448,6 +452,31 @@ function toIndex(){
 		window.location.href="movieList.jsp";
 	}else{
 		window.location.href="index.jsp";
+	}
+	
+}
+
+function refreshRecommend(){
+
+	if($.trim($('#userId').val())!=""){
+		var uId = $('#userId').val();
+		
+		// 刷新用户的推荐电影信息
+		$.ajax({
+			type : "post",
+			url : "${PROJECT_PATH }/recommend/refreshRecommend",
+			dataType : "json",//接收服务端返回的数据类型
+			data : {"uId":uId},
+			success : function(result) {
+				console.log(result.extend.message);//打印服务端返回的数据
+	            			
+			},
+			error : function() {
+				console.log("服务端出现异常！");
+				//window.location.href="500.jsp";
+			}
+		});
+		
 	}
 	
 }

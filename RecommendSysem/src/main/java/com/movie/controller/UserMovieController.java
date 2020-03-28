@@ -34,6 +34,12 @@ public class UserMovieController {
 	@Autowired
 	private MovieService movieService;
 	
+	/**
+	 * 根据用户ID和电影ID为用户添加观影记录
+	 * @param uId
+	 * @param mId
+	 * @return
+	 */
 	@RequestMapping(value="/addMovieToUser",method=RequestMethod.POST)
 	@ResponseBody
 	public Message addMovieToUser(@RequestParam("uId")String uId,@RequestParam("mId")String mId) {
@@ -41,12 +47,26 @@ public class UserMovieController {
 		
 		Integer userId = Integer.parseInt(uId);
 		
-		userMovieService.addMovieToUser(userId,id);
-		
-		return Message.success().add("msg", "已看完电影，请请为该电影评分，谢谢支持！");
+		// 获取user_movie表中的电影信息
+		List<UserMovie> list = userMovieService.getSingleMovie(id,userId);
+				
+		// 先判断是否播放了电影(数据中是否为该用户添加了该电影)
+		if (list.size()>0) {
+			return Message.success().add("msg", "谢谢再次观看本电影！");
+		}else {
+			userMovieService.addMovieToUser(userId,id);
+			return Message.success().add("msg", "已看完电影，请为该电影评分，谢谢支持！");
+		}
 		
 	}
 	
+	/**
+	 * 根据用户ID和电影ID为用户观看的电影评分
+	 * @param uId
+	 * @param mId
+	 * @param mov_grade
+	 * @return
+	 */
 	@RequestMapping(value="/grade",method=RequestMethod.POST)
 	@ResponseBody
 	public Message grade(@RequestParam("uId")Integer uId,@RequestParam("mId")Integer mId,@RequestParam("mov_grade")String mov_grade) {
@@ -57,19 +77,24 @@ public class UserMovieController {
 		Integer grade = Integer.parseInt(mGrade);
 		
 		// 获取user_movie表中的电影信息
-		UserMovie userMovie = userMovieService.getSingle(mId);
+		List<UserMovie> list = userMovieService.getSingleMovie(mId,uId);
 		
 		// 先判断是否播放了电影(数据中是否为该用户添加了该电影)
-		if (userMovie == null) {
-			return Message.failed().add("msg", "请先观看电影！");
-		} else {
-
+		if (list.size()>0) {
 			userMovieService.updateGrade(uId,mId, grade);
 			return Message.success().add("msg", "评分成功");
+		} else {
+			return Message.failed().add("msg", "请先观看电影！");
 		}
 		
 	}
 	
+	/**
+	 * 根据用户Id查询用户的历史观影记录
+	 * @param pageNumber
+	 * @param uId
+	 * @return
+	 */
 	@RequestMapping(value="/historyList",method=RequestMethod.POST)
 	@ResponseBody
 	public Message historyList(@RequestParam(value="pageNumber",defaultValue="1") Integer pageNumber,@RequestParam("uId")Integer uId) {
@@ -92,9 +117,12 @@ public class UserMovieController {
 		return Message.success().add("historyList", page);
 		
 	}
-	
+
 	/**
-	 * 根据mId查询user_movie表中是否存在该电影
+	 * 根据电影ID查询user_movie表中是否存在该电影
+	 * @param mId
+	 * @param uId
+	 * @return
 	 */
 	@RequestMapping(value="/getSingleMovie",method=RequestMethod.POST)
 	@ResponseBody
