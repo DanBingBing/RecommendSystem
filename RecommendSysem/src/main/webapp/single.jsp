@@ -101,8 +101,9 @@
 					id="bs-example-navbar-collapse-1">
 					<nav>
 						<ul class="nav navbar-nav">
-							<li class="active"><a href="javascript:;" onclick="toIndex();">首页</a></li>
-
+							<li><a href="javascript:;" onclick="toIndex();">首页</a></li>
+							<li><a href="javascript:;" onclick="toRecommend();">推荐电影</a></li>
+							<li class="active"><a href="${PROJECT_PATH }/single.jsp">电影单页</a></li>
 						</ul>
 					</nav>
 				</div>
@@ -411,9 +412,11 @@ function grade(){
 	            	// 清空之前的显示的信息
 	                $("#message").empty();
 	                $("#message").append(result.extend.msg).attr("style","color:green;");
+	                // 评分成功后刷新该页面，去掉确定按钮、防止用户多次点击该按钮，多次发送推荐请求，增加服务器压力
+	                window.location.href="${PROJECT_PATH }/single.jsp"; 
 	                
 	                // 评分成功后刷新用户的推荐电影信息
-	     			refreshRecommend();           
+	     			refreshRecommend();
 	                
 	            }else{
 	            	// 清空之前的显示的信息
@@ -431,27 +434,6 @@ function grade(){
 		// 清空之前的显示的信息
 	    $("#message").empty();
 	    $("#message").append("请先登录！").attr("style","color:red;");
-	}
-	
-}
-</script>
-
-<script>
-function searchMovie() {
-	var name = $("#search").val();
-	// 1.判断搜索框是否为空，不为空进入搜索
-	if (name!=''||name!=null) {
-		window.location.href="searchList.jsp?mName="+name;
-	}
-
-}
-
-function toIndex(){
-	// a标签与input的取文本值、取值函数不同
-	if($.trim($('#username').text())!=""){
-		window.location.href="movieList.jsp";
-	}else{
-		window.location.href="index.jsp";
 	}
 	
 }
@@ -480,6 +462,38 @@ function refreshRecommend(){
 	}
 	
 }
+</script>
+
+<script>
+function searchMovie() {
+	var name = $("#search").val();
+	// 1.判断搜索框是否为空，不为空进入搜索
+	if (name!=''||name!=null) {
+		window.location.href="searchList.jsp?mName="+name;
+	}
+
+}
+
+function toIndex(){
+	// a标签与input的取文本值、取值函数不同
+	if($.trim($('#username').text())!=""){
+		window.location.href="movieList.jsp";
+	}else{
+		window.location.href="index.jsp";
+	}
+	
+}
+
+function toRecommend(){
+	// a标签与input的取文本值、取值函数不同
+	if($.trim($('#username').text())!=""){
+		window.location.href="recommendList.jsp";
+	}else{
+		window.location.href="index.jsp";
+	}
+}
+
+
 
 //获取url上的参数
 function getQueryString(name) {

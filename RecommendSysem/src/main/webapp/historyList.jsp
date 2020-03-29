@@ -114,6 +114,7 @@
 				<nav>
 					<ul class="nav navbar-nav">
 						<li><a href="javascript:;" onclick="toIndex();">首页</a></li>
+						<li><a href="javascript:;" onclick="toRecommend();">推荐电影</a></li>
 						<li class="active"><a href="historyList.jsp">观看历史</a></li>
 					</ul>
 				</nav>
@@ -381,6 +382,15 @@ function build_page_nav(result){
 			window.location.href="index.jsp";
 		}
 		
+	}
+	
+	function toRecommend(){
+		// a标签与input的取文本值、取值函数不同
+		if($.trim($('#username').text())!=""){
+			window.location.href="recommendList.jsp";
+		}else{
+			window.location.href="index.jsp";
+		}
 	}
 	
 	function searchMovie() {

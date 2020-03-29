@@ -116,8 +116,8 @@
 				 id="bs-example-navbar-collapse-1">
 				<nav>
 					<ul class="nav navbar-nav">
-						<li class="active"><a href="${PROJECT_PATH }/movieList.jsp">首页</a></li>
-
+						<li class="active"><a href="javascript:;" onclick="toIndex();">首页</a></li>
+						<li class="active"><a href="${PROJECT_PATH }/searchList.jsp">继续搜索</a></li>
 					</ul>
 				</nav>
 			</div>
@@ -133,7 +133,7 @@
 			<!--/browse-agile-w3ls -->
 			<div class="browse-agile-w3ls general-w3ls">
 				<div class="tittle-head">
-					<h4 class="latest-text">推荐电影</h4>
+					<h4 class="latest-text">电影列表</h4>
 					<div class="container">
 						<div class="agileits-single-top">
 							<ol class="breadcrumb">
@@ -378,6 +378,17 @@
 </script>
 
 <script type="text/javascript">
+	
+	function toIndex(){
+		// a标签与input的取文本值、取值函数不同
+		if($.trim($('#username').text())!=""){
+			window.location.href="movieList.jsp";
+		}else{
+			window.location.href="index.jsp";
+		}
+		
+	}
+
 	function searchMovie() {
 		var name = $("#search").val();
 		// 1.判断搜索框是否为空，不为空进入搜索

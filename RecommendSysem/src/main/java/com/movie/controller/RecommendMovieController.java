@@ -56,7 +56,7 @@ public class RecommendMovieController {
 		// 查询用户所有的推荐电影
 		List<RecommendMovie> list = recommendMovieService.getAllRecommendListByUserId(uId);
 
-		// 调用对象集合排序工具类对集合中的 recGrade 进行降序排列
+		// 调用对象集合排序工具类对集合中的推荐评分列进行降序排列
 		SortListUtil.sort(list, "recGrade", SortListUtil.DESC);
 		
 		// 该list封装了所有的电影信息
@@ -83,10 +83,6 @@ public class RecommendMovieController {
 	@RequestMapping(value="/refreshRecommend",method=RequestMethod.POST)
 	@ResponseBody
 	public Message refreshRecommend(@RequestParam("uId")Integer uId) throws Exception {
-		// 从数据库中删除用户旧的推荐信息
-		recommendMovieService.deleteAllRecommendMovieByUserId(1);
-		// 从数据库中删除用户旧的推荐信息
-		recommendMovieService.deleteAllRecommendMovieByUserId(2);
 		
 		// 生成电影特征文件
 		List<Movie> movies = movieService.getMovieList();
