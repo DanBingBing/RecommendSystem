@@ -58,19 +58,18 @@ public class RecommendMovieController {
 
 		// 调用对象集合排序工具类对集合中的推荐评分列进行降序排列
 		SortListUtil.sort(list, "recGrade", SortListUtil.DESC);
+		System.out.println(JsonUtil.objectToJson(list));
 		
-		// 该list封装了所有的电影信息
 		List<Movie> movieList = new ArrayList<>();
 		
+		// 根据list集合中的电影ID查询电影信息并保存到movieList集合中
 		for(int i=0;i<list.size();i++) {
 			movieList.add(movieService.getSingle(list.get(i).getMovId()));
 		}
 		
 		// 调用自定义的集合分页工具，传入参数要分页的集合、页码、以及每页大小
-		// （伪分页，表示依然要从数据库查询所有的数据保存到集合中，对集合进行分页，主要用于信息量不大的数据）
 		ListPagerUtil<Movie> page = new ListPagerUtil<Movie>(movieList,pageNumber,30);
 				
-		System.out.println(JsonUtil.objectToJson(page));
 		return Message.success().add("movieList", page);
 	
 	}
