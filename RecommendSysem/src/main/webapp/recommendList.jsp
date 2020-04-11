@@ -369,12 +369,15 @@ function to_page(pn){
 				//window.location.href="500.jsp";
 			}
 		});
-		// 将ajax请求数据与vue渲染数据分离，vue不能定义在success函数中
-		// 1.解析json并显示电影数据(这里必须将数据赋值给vue中的data)
-		build_movie_table(result);
 		
-		// 3.解析json并显示分页条信息
-		build_page_nav(result);	
+		if(result.code==200){
+			// 将ajax请求数据与vue渲染数据分离，vue不能定义在success函数中
+			// 1.解析json并显示电影数据(这里必须将数据赋值给vue中的data)
+			build_movie_table(result);
+		
+			// 3.解析json并显示分页条信息
+			build_page_nav(result);
+		}
 
 	}
 }

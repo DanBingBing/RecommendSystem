@@ -130,25 +130,13 @@
             </div>
             <div class="modal-body">
                 <div class="div1" id="div1">
-                    <button type="button" class="btn btn-info btn-xs" id="btn1" onclick="add(this);">特征1 <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
-                    <button type="button" class="btn btn-info btn-xs" id="btn3" onclick="add(this);">特征3 <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
-                    <button type="button" class="btn btn-info btn-xs" id="btn5" onclick="add(this);">特征5 <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
-                    <button type="button" class="btn btn-info btn-xs" id="btn6" onclick="add(this);">特征6 <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
-                    <button type="button" class="btn btn-info btn-xs" id="btn7" onclick="add(this);">特征7 <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
-                    <button type="button" class="btn btn-info btn-xs" id="btn8" onclick="add(this);">特征8 <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
-                    <button type="button" class="btn btn-info btn-xs" id="btn9" onclick="add(this);">特征9 <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
-                    <button type="button" class="btn btn-info btn-xs" id="btn10" onclick="add(this);">特征10 <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
-                    <br></br>
-                    <button type="button" class="btn btn-info btn-xs" id="btn11" onclick="add(this);">特征11 <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
-                    <button type="button" class="btn btn-info btn-xs" id="btn12" onclick="add(this);">特征12 <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
-                    <button type="button" class="btn btn-info btn-xs" id="btn13" onclick="add(this);">特征13 <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
-                    <button type="button" class="btn btn-info btn-xs" id="btn14" onclick="add(this);">特征14 <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
-                    <button type="button" class="btn btn-info btn-xs" id="btn15" onclick="add(this);">特征15 <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                    <!-- <button type="button" class="btn btn-info btn-xs" id="btn1" onclick="add(this);">特征1 <i class="fa fa-plus-circle" aria-hidden="true"></i></button>-->
+                    
                 </div>
                 <hr></hr>
                 <div class="div1" id="div2">
-                    <button type="button" class="btn btn-success btn-xs" id="btn2" onclick="remove(this);">特征2 <i class="fa fa-minus-circle" aria-hidden="true"></i></button>
-                    <button type="button" class="btn btn-success btn-xs" id="btn4"  onclick="remove(this);">特征4 <i class="fa fa-minus-circle" aria-hidden="true"></i></button>
+                    <!-- <button type="button" class="btn btn-success btn-xs" id="btn2" onclick="remove(this);">特征2 <i class="fa fa-minus-circle" aria-hidden="true"></i></button> -->
+                    
                 </div>
             </div>
             <div class="modal-footer">
@@ -200,7 +188,7 @@
 						<div class="agileits-single-top">
 							<ol class="breadcrumb">
 								<li><a href="index.jsp">Home</a></li>
-								<li class="active">recommend</li>
+								<li class="active">movies</li>
 							</ol>
 						</div>
 					</div>
@@ -519,6 +507,35 @@ function build_page_nav(result){
     			if(result.code == 100){
     				// 打开兴趣标签添加窗口
                 	$("#myModal2").modal("show");
+                	
+                	$.ajax({
+            			type : "post",
+            			url : "${PROJECT_PATH }/movieTag/getAllTag",
+            			dataType : "json",
+            			success : function(result) {
+                			console.log(result);
+                			
+                			// <button type="button" class="btn btn-info btn-xs" id="btn15" onclick="add(this);">特征15 <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                			// 遍历显示用户兴趣标签
+							$.each(result.extend.tagList,function(index,item){
+								var btnId = "btn"+index;
+								
+								$("#div1").append($("<button></button>").attr("id",btnId).attr("value",item.mtName));
+								$("#"+btnId).attr("type","button").attr("class","btn btn-info btn-xs").attr("onclick","add(this);");
+								$("#"+btnId).append(item.mtName).append("&nbsp;");
+								$("#"+btnId).append($("<i></i>").attr("class","fa fa-plus-circle").attr("aria-hidden","true"));
+								
+								if((index+1)%8==0){
+									$("#div1").append("<br></br>");
+								}
+							});
+                	
+            			},
+            			error : function() {
+                			console.log("服务端出现异常！");
+                			//window.location.href="500.jsp";
+            			}
+        			});
                 	
             	}
             },
