@@ -78,6 +78,11 @@
 		});
 	</script>
 
+	<style>
+        .div1{text-align:center}
+        .btn{margin-right: 4px}
+    </style>
+    
 </head>
 
 <body>
@@ -104,13 +109,57 @@
 					<a href="#" id="username">${sessionScope.user.username }</a>
 				</li>
 			</ul>
-
+			<input type="hidden" value="${sessionScope.user.id}" id="userId" />
 		</div>
 		<div class="clearfix"></div>
 	</div>
 </div>
 
+<!-- bootstrap-pop-up -->
+<!-- 用户兴趣标签添加模态框 -->
+<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    添加兴趣标签
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="div1" id="div1">
+                    <button type="button" class="btn btn-info btn-xs" id="btn1" onclick="add(this);">特征1 <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                    <button type="button" class="btn btn-info btn-xs" id="btn3" onclick="add(this);">特征3 <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                    <button type="button" class="btn btn-info btn-xs" id="btn5" onclick="add(this);">特征5 <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                    <button type="button" class="btn btn-info btn-xs" id="btn6" onclick="add(this);">特征6 <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                    <button type="button" class="btn btn-info btn-xs" id="btn7" onclick="add(this);">特征7 <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                    <button type="button" class="btn btn-info btn-xs" id="btn8" onclick="add(this);">特征8 <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                    <button type="button" class="btn btn-info btn-xs" id="btn9" onclick="add(this);">特征9 <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                    <button type="button" class="btn btn-info btn-xs" id="btn10" onclick="add(this);">特征10 <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                    <br></br>
+                    <button type="button" class="btn btn-info btn-xs" id="btn11" onclick="add(this);">特征11 <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                    <button type="button" class="btn btn-info btn-xs" id="btn12" onclick="add(this);">特征12 <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                    <button type="button" class="btn btn-info btn-xs" id="btn13" onclick="add(this);">特征13 <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                    <button type="button" class="btn btn-info btn-xs" id="btn14" onclick="add(this);">特征14 <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                    <button type="button" class="btn btn-info btn-xs" id="btn15" onclick="add(this);">特征15 <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                </div>
+                <hr></hr>
+                <div class="div1" id="div2">
+                    <button type="button" class="btn btn-success btn-xs" id="btn2" onclick="remove(this);">特征2 <i class="fa fa-minus-circle" aria-hidden="true"></i></button>
+                    <button type="button" class="btn btn-success btn-xs" id="btn4"  onclick="remove(this);">特征4 <i class="fa fa-minus-circle" aria-hidden="true"></i></button>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">跳过</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="commit();">提交</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
 <!-- //bootstrap-pop-up -->
+
 <!-- nav -->
 <div class="movies_nav">
 	<div class="container">
@@ -326,7 +375,16 @@
 
 <script type="text/javascript">
 jQuery(document).ready(function($) {
+
+	if($.trim($('#username').text())!=""){
+		var username = $('#username').text();
+		
+		// 判断是否为新用户，新用户需要添加兴趣标签
+    	newUserCheck(username);
+	}
+		
 	to_page(1);
+	
 });
 
 //1.使用vue解析json并渲染电影数据到页面
@@ -447,6 +505,31 @@ function build_page_nav(result){
 </script>
 
 <script type="text/javascript">
+
+	function newUserCheck(username){
+    	console.log(username);
+    	$.ajax({
+            type : "post",
+            url : "${PROJECT_PATH }/userMovie/newUserCheck",
+            dataType : "json",//接收服务端返回的数据类型
+            data : {"username":username},
+            success : function(result) {
+                console.log(result);//打印服务端返回的数据
+                // 判断是否为新用户，新用户需要添加兴趣标签
+    			if(result.code == 100){
+    				// 打开兴趣标签添加窗口
+                	$("#myModal2").modal("show");
+                	
+            	}
+            },
+            error : function() {
+                console.log("服务端出现异常！");
+                //window.location.href="500.jsp";
+            }
+        });
+            
+    }
+
 	function toIndex(){
 		// a标签与input的取文本值、取值函数不同
 		if($.trim($('#username').text())!=""){
@@ -481,5 +564,90 @@ function build_page_nav(result){
 		window.location.href="single.jsp?mId="+movie.mId;
 	}
 </script>
+
+<script>
+    function commit(){
+        var btnx = document.querySelectorAll('#div2 button');
+        var tag = [btnx.length];
+
+        $.each(btnx, function(i){
+            tag[i] = $(this).text();
+        });
+        
+        if($.trim($('#username').text())!=""){
+            var uId = $('#userId').val();
+        	for(var i=0;i<btnx.length;i++){
+            	console.log(tag[i]);
+
+            	$.ajax({
+                	type : "post",
+                	url : "${PROJECT_PATH }/userTag/addUserTag",
+                	dataType : "json",//接收服务端返回的数据类型
+                	data : {"uId":uId,"userTag":tag[i]},
+                	success : function(result) {
+                    	console.log(result);//打印服务端返回的数据
+                	},
+                	error : function() {
+                    	console.log("服务端出现异常！");
+                    	//window.location.href="500.jsp";
+                	}
+            	});
+
+        	}
+        	
+        }
+
+    }
+
+    function add(value){
+        var btn = $(value).attr("id");
+        var str = '#'+btn;
+        var pic = str+' i';
+        var btnx = document.querySelector(str);
+        $("#div2").append(btnx);
+        $(str).removeAttr("onclick");
+        $(str).attr("onclick","remove(this);");
+        $(str).removeAttr("class","btn btn-info btn-xs");
+        $(str).attr("class","btn btn-success btn-xs");
+        $(pic).removeAttr("class","fa fa-plus-circle");
+        $(pic).attr("class","fa fa-minus-circle");
+
+        equal5();
+    }
+
+    function remove(value){
+        var btn = $(value).attr("id");
+        var str = '#'+btn;
+        var pic = str+' i';
+        var btnx = document.querySelector(str);
+
+        $("#div1").append(btnx);
+        $(str).removeAttr("class","btn btn-success btn-xs");
+        $(str).attr("class","btn btn-info btn-xs");
+        $(str).removeAttr("onclick");
+        $(str).attr("onclick","add(this);");
+        $(pic).removeAttr("class","fa fa-minus-circle");
+        $(pic).attr("class","fa fa-plus-circle");
+
+        notEqual5();
+    }
+
+    function equal5(){
+        var button = document.querySelectorAll('#div2 button');
+        if(button.length==5){
+            $(".btn-info").removeAttr("onclick");
+        }
+    }
+
+    function notEqual5(){
+        var button = document.querySelectorAll('#div2 button');
+        if(button.length!=5){
+            $(".btn-info").removeAttr("onclick");
+            $(".btn-info").attr("onclick","add(this);");
+        }
+    }
+
+</script>
+
 </body>
 </html>

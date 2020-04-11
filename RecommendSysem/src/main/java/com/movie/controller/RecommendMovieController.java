@@ -67,8 +67,13 @@ public class RecommendMovieController {
 			movieList.add(movieService.getSingle(list.get(i).getMovId()));
 		}
 		
+		int count = 0;
+		if(movieList.size()>0) {
+			count = 30;
+		}
+		
 		// 调用自定义的集合分页工具，传入参数要分页的集合、页码、以及每页大小
-		ListPagerUtil<Movie> page = new ListPagerUtil<Movie>(movieList,pageNumber,30);
+		ListPagerUtil<Movie> page = new ListPagerUtil<Movie>(movieList,pageNumber,count);
 				
 		return Message.success().add("movieList", page);
 	

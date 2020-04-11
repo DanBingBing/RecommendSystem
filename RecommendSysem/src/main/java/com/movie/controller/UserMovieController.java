@@ -15,9 +15,11 @@ import com.movie.utils.Message;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.movie.pojo.Movie;
+import com.movie.pojo.User;
 import com.movie.pojo.UserMovie;
 import com.movie.service.MovieService;
 import com.movie.service.UserMovieService;
+import com.movie.service.UserService;
 
 /**
  * 用户对电影的相关操作控制器
@@ -33,6 +35,9 @@ public class UserMovieController {
 	
 	@Autowired
 	private MovieService movieService;
+	
+	@Autowired
+	private UserService userService;
 	
 	/**
 	 * 根据用户ID和电影ID为用户添加观影记录
@@ -134,6 +139,31 @@ public class UserMovieController {
 			return Message.success().add("movie", movie);
 		}else {
 			return Message.failed();
+		}
+		
+	}
+	
+	/**
+	 * 根据用户ID和电影ID为用户添加观影记录
+	 * @param uId
+	 * @param mId
+	 * @return
+	 */
+	@RequestMapping(value="/newUserCheck",method=RequestMethod.POST)
+	@ResponseBody
+	public Message newUserCheck(@RequestParam("username")String username) {
+		
+		// 根据用户名获取用户信息
+		List<User> user = userService.findUsername(username);
+		
+		//根据用户id获取user_movie表中的用户观影历史信息
+		List<UserMovie> list = userMovieService.getHistoryMovies(user.get(0).getId());
+				
+		// 判断该用户是否为新用户或没有观影记录的用户
+		if (list.size()>0) {
+			return Message.success().add("msg", "欢迎！");
+		}else {
+			return Message.failed().add("user", user);
 		}
 		
 	}

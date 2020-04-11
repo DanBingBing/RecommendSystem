@@ -64,6 +64,9 @@
         });
     </script>
     
+    <style>
+        #exit{margin:0 auto;width:72px;}
+    </style>
 </head>
 
 <body>
@@ -88,14 +91,20 @@
                 <li id="li">
                 	<a href="" id="loginHref" data-toggle="modal" data-target="#myModal">登录</a>
                 </li>
+                <li></li>
+				<li></li>
+				<li><a href="#" id="exit"><i class="fa fa-power-off"></i></a></li>
             </ul>
-
+            <input type="hidden" value="${sessionScope.user.username}" id="newUsername" />
+			<input type="hidden" value="${sessionScope.user.id}" id="newUserId" />
         </div>
         <div class="clearfix"></div>
     </div>
 </div>
 <!-- //header -->
+
 <!-- bootstrap-pop-up -->
+<!-- 用户登录注册模态框 -->
 <div class="modal video-modal fade" id="myModal" tabindex="-1"
      role="dialog" aria-labelledby="myModal">
     <div class="modal-dialog" role="document">
@@ -382,6 +391,7 @@
 <script type="text/javascript">
 jQuery(document).ready(function($) {
 	to_page(1);
+	
 });
 
 var result;
@@ -575,7 +585,7 @@ function build_page_nav(result){
             //清空模态框中的登录信息
             //$("#loginForm").empty(); //使用这个会清空form表单下的所有标签等信息，包括文本和子节点，remove()是移除指定的当前节点。
             //$("#loginForm input").val(''); //使用这个会清空form表单下的所有input框中的value值
-            $("#username").val('');
+            //$("#username").val('');
             $("#password").val('');
             $("#name").val('');
             $("#username1").val('');
@@ -583,11 +593,39 @@ function build_page_nav(result){
             $("#message").empty();
             // 关闭模态框(登录成功后自动关闭模态框)
             $("#myModal").modal("hide");
-
-            //跳转到movieList.jsp页面
-            window.location.href="movieList.jsp";
+            
+            // 判断是否为新用户，新用户需要添加兴趣标签
+            newUserCheck(username);
+            
         }
 
+    }
+    
+    function newUserCheck(username){
+    	console.log(username);
+    	$.ajax({
+            type : "post",
+            url : "${PROJECT_PATH }/userMovie/newUserCheck",
+            dataType : "json",//接收服务端返回的数据类型
+            data : {"username":username},
+            success : function(result) {
+                console.log(result);//打印服务端返回的数据
+                // 判断是否为新用户，新用户需要添加兴趣标签
+    			if(result.code == 100){
+    				//先跳转到movieList.jsp页面（方便获取用户信息参数）
+            		window.location.href="movieList.jsp";
+                	
+            	}else{
+            		//不是新用户则跳转到recommendList.jsp页面
+            		window.location.href="recommendList.jsp";
+            	}
+            },
+            error : function() {
+                console.log("服务端出现异常！");
+                //window.location.href="500.jsp";
+            }
+        });
+            
     }
 
     // 点击关闭模态框按钮
@@ -638,6 +676,7 @@ function build_page_nav(result){
                                         .attr("style","color:green;");
                                 // 关闭当前注册窗口
                                 $("#form2").attr("style","display: none;");
+                                
                                 // 打开登录窗口
                                 $("#form1").attr("style","display: block;");
                                 // 清空注册信息
@@ -683,5 +722,6 @@ function build_page_nav(result){
 		window.location.href="single.jsp?mId="+movie.mId;
 	}
 </script>
+
 </body>
 </html>
