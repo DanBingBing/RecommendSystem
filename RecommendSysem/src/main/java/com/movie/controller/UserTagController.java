@@ -25,9 +25,10 @@ public class UserTagController {
 	 */
 	@RequestMapping(value="/addUserTag",method=RequestMethod.POST)
 	@ResponseBody
-	public Message addUserTag(@RequestParam("uId")Integer uId,@RequestParam("userTag")String userTag) {
-		
-		userTagService.addUserTag(uId, userTag);
+	public Message addUserTag(@RequestParam("uId")Integer uId,@RequestParam("userTag")String[] userTag) {
+		for(int i=0;i<userTag.length;i++) {
+			userTagService.addUserTag(uId, userTag[i]);
+		}
 		
 		return Message.success().add("msg", "为新用户添加兴趣标签成功！");
 		

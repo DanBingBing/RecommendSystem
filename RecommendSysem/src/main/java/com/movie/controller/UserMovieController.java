@@ -17,9 +17,11 @@ import com.github.pagehelper.PageInfo;
 import com.movie.pojo.Movie;
 import com.movie.pojo.User;
 import com.movie.pojo.UserMovie;
+import com.movie.pojo.UserTag;
 import com.movie.service.MovieService;
 import com.movie.service.UserMovieService;
 import com.movie.service.UserService;
+import com.movie.service.UserTagService;
 
 /**
  * 用户对电影的相关操作控制器
@@ -38,6 +40,9 @@ public class UserMovieController {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private UserTagService userTagService;
 	
 	/**
 	 * 根据用户ID和电影ID为用户添加观影记录
@@ -144,10 +149,9 @@ public class UserMovieController {
 	}
 	
 	/**
-	 * 根据用户ID和电影ID为用户添加观影记录
-	 * @param uId
-	 * @param mId
-	 * @return
+	 * 根据用户名判断用户是否为新用户
+	 * @param username
+	 * @return Message
 	 */
 	@RequestMapping(value="/newUserCheck",method=RequestMethod.POST)
 	@ResponseBody
@@ -158,12 +162,16 @@ public class UserMovieController {
 		
 		//根据用户id获取user_movie表中的用户观影历史信息
 		List<UserMovie> list = userMovieService.getHistoryMovies(user.get(0).getId());
+		
+		List<UserTag> utList = userTagService.getUserTag(user.get(0).getId());
 				
 		// 判断该用户是否为新用户或没有观影记录的用户
 		if (list.size()>0) {
 			return Message.success().add("msg", "欢迎！");
+		}else if(utList.size()>0){
+			return Message.failed().add("flag", true);
 		}else {
-			return Message.failed().add("user", user);
+			return Message.failed().add("flag", false);
 		}
 		
 	}

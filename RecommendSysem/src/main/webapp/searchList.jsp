@@ -65,6 +65,10 @@
 			});
 		});
 	</script>
+	
+	<style>
+        #exit{margin:0 auto;width:72px;}
+    </style>
 
 </head>
 
@@ -91,6 +95,7 @@
 					<!-- jstl方法取出session中的数据 -->
 					<a href="#">${sessionScope.user.username }</a>
 				</li>
+				<li><a href="javascript:void(0);" id="exit" onclick="exit();"><i class="fa fa-power-off"></i></a></li>
 			</ul>
 
 		</div>
@@ -401,6 +406,14 @@
 	// 通过 v-on:click 绑定的方法可在<script>中直接实现，也可在vue的methods中实现
 	function play_video(mId){
 		window.location.href="single.jsp?mId="+mId;
+	}
+	
+	function exit(){
+		window.location.href="index.jsp";
+		// 清空session域中的用户对象
+		//session.removeAttribute("user"); 
+		// 使session域对象失效
+		session.invalidate();
 	}
 	
 	//获取url上的参数

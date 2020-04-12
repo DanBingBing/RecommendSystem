@@ -64,9 +64,6 @@
         });
     </script>
     
-    <style>
-        #exit{margin:0 auto;width:72px;}
-    </style>
 </head>
 
 <body>
@@ -91,12 +88,9 @@
                 <li id="li">
                 	<a href="" id="loginHref" data-toggle="modal" data-target="#myModal">登录</a>
                 </li>
-                <li></li>
-				<li></li>
-				<li><a href="#" id="exit"><i class="fa fa-power-off"></i></a></li>
+                
             </ul>
-            <input type="hidden" value="${sessionScope.user.username}" id="newUsername" />
-			<input type="hidden" value="${sessionScope.user.id}" id="newUserId" />
+            
         </div>
         <div class="clearfix"></div>
     </div>
@@ -594,40 +588,12 @@ function build_page_nav(result){
             // 关闭模态框(登录成功后自动关闭模态框)
             $("#myModal").modal("hide");
             
-            // 判断是否为新用户，新用户需要添加兴趣标签
-            newUserCheck(username);
-            
+            // 登录成功后跳转到推荐页面
+            window.location.href="recommendList.jsp";
         }
 
     }
     
-    function newUserCheck(username){
-    	console.log(username);
-    	$.ajax({
-            type : "post",
-            url : "${PROJECT_PATH }/userMovie/newUserCheck",
-            dataType : "json",//接收服务端返回的数据类型
-            data : {"username":username},
-            success : function(result) {
-                console.log(result);//打印服务端返回的数据
-                // 判断是否为新用户，新用户需要添加兴趣标签
-    			if(result.code == 100){
-    				//先跳转到movieList.jsp页面（方便获取用户信息参数）
-            		window.location.href="movieList.jsp";
-                	
-            	}else{
-            		//不是新用户则跳转到recommendList.jsp页面
-            		window.location.href="recommendList.jsp";
-            	}
-            },
-            error : function() {
-                console.log("服务端出现异常！");
-                //window.location.href="500.jsp";
-            }
-        });
-            
-    }
-
     // 点击关闭模态框按钮
     function closeModal() {
         //清空模态框中的登录信息

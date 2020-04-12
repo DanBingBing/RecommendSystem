@@ -49,22 +49,7 @@
 	<link href="css/owl.carousel.css" rel="stylesheet" type="text/css"
 		  media="all">
 	<script src="js/owl.carousel.js"></script>
-	<script>
-		$(document).ready(function() {
-			// 轮播区动态效果
-			$("#owl-demo").owlCarousel({
-
-				// 每隔3秒自动切换
-				autoPlay: 3000,
-
-				items : 5,
-				itemsDesktop : [640,4],
-				itemsDesktopSmall : [414,3]
-
-			});
-
-		});
-	</script>
+	
 	<script type="text/javascript" src="js/move-top.js"></script>
 	<script type="text/javascript" src="js/easing.js"></script>
 	<script type="text/javascript">
@@ -77,6 +62,13 @@
 			});
 		});
 	</script>
+	
+	<style>
+        .div1{text-align:center}
+        .btn{margin-right: 4px}
+        
+        #exit{margin:0 auto;width:72px;}
+    </style>
 
 </head>
 
@@ -103,6 +95,7 @@
 					<!-- jstl方法取出session中的数据 -->
 					<a href="#" id="username">${sessionScope.user.username }</a>
 				</li>
+				<li><a href="javascript:void(0);" id="exit" onclick="exit();"><i class="fa fa-power-off"></i></a></li>
 			</ul>
 			<input type="hidden" value="${sessionScope.user.id}" id="userId" />
 		</div>
@@ -110,7 +103,39 @@
 	</div>
 </div>
 
+<!-- bootstrap-pop-up -->
+<!-- 用户兴趣标签添加模态框 -->
+<div class="modal fade" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true" onclick="toMovieList();">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    添加兴趣标签
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="div1" id="div1">
+                    <!-- <button type="button" class="btn btn-info btn-xs" id="btn1" onclick="add(this);">特征1 <i class="fa fa-plus-circle" aria-hidden="true"></i></button>-->
+                    
+                </div>
+                <hr></hr>
+                <div class="div1" id="div2">
+                    <!-- <button type="button" class="btn btn-success btn-xs" id="btn2" onclick="remove(this);">特征2 <i class="fa fa-minus-circle" aria-hidden="true"></i></button> -->
+                    
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="toMovieList();">跳过</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="commit();">提交</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
 <!-- //bootstrap-pop-up -->
+
 <!-- nav -->
 <div class="movies_nav">
 	<div class="container">
@@ -326,6 +351,13 @@
 
 <script type="text/javascript">
 jQuery(document).ready(function($) {
+	if($.trim($('#username').text())!=""){
+		var username = $('#username').text();
+		
+		// 判断是否为新用户，新用户需要添加兴趣标签
+    	newUserCheck(username);
+	}
+	
 	to_page(1);
 });
 
@@ -488,6 +520,204 @@ function build_page_nav(result){
 	function play_video(movie){
 		window.location.href="single.jsp?mId="+movie.mId;
 	}
+	
+	function exit(){
+		window.location.href="index.jsp";
+		// 清空session域中的用户对象
+		session.removeAttribute("user"); 
+		// 使session域对象失效
+		//session.invalidate();
+		
+	}
+</script>
+
+<script type="text/javascript">
+function newUserRecommend(){
+	
+	if($.trim($('#userId').val())!=""){
+		var uId = $('#userId').val();
+		
+		// 刷新用户的推荐电影信息
+		$.ajax({
+			type : "post",
+			url : "${PROJECT_PATH }/recommend/newUserRecommend",
+			dataType : "json",//接收服务端返回的数据类型
+			data : {"uId":uId},
+			success : function(result) {
+				console.log(result);//打印服务端返回的数据
+				// 渲染电影信息到页面
+				v.rows = result.extend.movieList;
+			},
+			error : function() {
+				console.log("服务端出现异常！");
+				//window.location.href="500.jsp";
+			}
+		});
+		
+	}
+	
+}
+
+	function newUserCheck(username){
+    	
+    	$.ajax({
+            type : "post",
+            url : "${PROJECT_PATH }/userMovie/newUserCheck",
+            dataType : "json",//接收服务端返回的数据类型
+            data : {"username":username},
+            success : function(result) {
+                console.log(result);//打印服务端返回的数据
+                // 判断是否为新用户，新用户需要添加兴趣标签
+    			if(result.code == 100){
+    				if(result.extend.flag == true){
+    					// 新用户推荐列表
+    	            	newUserRecommend();
+    				}else{
+    					// 打开兴趣标签添加窗口
+                    	$("#myModal2").modal("show");
+                    	
+                    	$.ajax({
+                			type : "post",
+                			url : "${PROJECT_PATH }/movieTag/getAllTag",
+                			dataType : "json",
+                			success : function(result) {
+                    			console.log(result);
+                    			
+                    			// <button type="button" class="btn btn-info btn-xs" id="btn15" onclick="add(this);">特征15 <i class="fa fa-plus-circle" aria-hidden="true"></i></button>
+                    			// 遍历显示用户兴趣标签
+    							$.each(result.extend.tagList,function(index,item){
+    								var btnId = "btn"+index;
+    								
+    								$("#div1").append($("<button></button>").attr("id",btnId).attr("value",item.mtName));
+    								$("#"+btnId).attr("type","button").attr("class","btn btn-info btn-xs").attr("onclick","add(this);");
+    								$("#"+btnId).append(item.mtName).append("&nbsp;");
+    								$("#"+btnId).append($("<i></i>").attr("class","fa fa-plus-circle").attr("aria-hidden","true"));
+    								
+    								if((index+1)%8==0){
+    									$("#div1").append("<br></br>");
+    								}
+    							});
+                    	
+                			},
+                			error : function() {
+                    			console.log("服务端出现异常！");
+                    			//window.location.href="500.jsp";
+                			}
+            			});
+                    	
+    				}
+                	
+            	}
+            },
+            error : function() {
+                console.log("服务端出现异常！");
+                //window.location.href="500.jsp";
+            }
+        });
+            
+    }
+	
+	function commit(){
+        var btnx = document.querySelectorAll('#div2 button');
+        var tag = [btnx.length];
+
+        $.each(btnx, function(i){
+        	// 获取button按钮中的文本内容(应该也可使用val()获取其value值,没有尝试)
+        	var str = $(this).text();
+        	// 去掉字符串中两端的空格
+        	//console.log(str.trim()+"bb");
+        	//console.log($.trim(str)+"pp");
+        	tag[i] = $.trim(str);
+        	// 去掉字符串中的所有空格
+        	//console.log(str.replace(/\s*/g,"")+"kk");
+            
+        });
+        
+        if($.trim($('#username').text())!=""){
+            var uId = $('#userId').val();
+            
+            /* $.ajax({
+            	type : "post",
+            	url : "${PROJECT_PATH }/userTag/addUserTag",
+            	dataType : "json",//接收服务端返回的数据类型
+            	data : {"uId":uId,"userTag":tag},
+            	// 默认是异步(true),这里设置为同步，等待该ajax请求完成后才继续执行后面的js代码
+            	// 否则newUserRecommend()方法会执行，导致查询不到新用户添加的兴趣标签
+            	async:false,
+            	// jQuery会调用jQuery.param序列化参数，jQuery.param( obj, traditional )，
+            	// traditional默认为false，即jquery会深度序列化参数对象，
+            	// 以适应如PHP和Ruby on Rails框架，但servelt api无法处理，
+            	// 我们可以通过设置traditional为true阻止深度序列化,以便于springMVC获取参数。
+            	traditional:true,
+            	success : function(result) {
+                	console.log(result);//打印服务端返回的数据
+            	},
+            	error : function() {
+                	console.log("服务端出现异常！");
+                	//window.location.href="500.jsp";
+            	}
+        	}); */
+            
+            if(btnx.length!=0){
+            	// 新用户推荐列表
+            	newUserRecommend();
+            }
+            
+        }
+        
+    }
+	
+	function toMovieList(){
+		window.location.href="movieList.jsp";
+	}
+
+    function add(value){
+        var btn = $(value).attr("id");
+        var str = '#'+btn;
+        var pic = str+' i';
+        var btnx = document.querySelector(str);
+        $("#div2").append(btnx);
+        $(str).removeAttr("onclick");
+        $(str).attr("onclick","remove(this);");
+        $(str).removeAttr("class","btn btn-info btn-xs");
+        $(str).attr("class","btn btn-success btn-xs");
+        $(pic).removeAttr("class","fa fa-plus-circle");
+        $(pic).attr("class","fa fa-minus-circle");
+
+        equal5();
+    }
+
+    function remove(value){
+        var btn = $(value).attr("id");
+        var str = '#'+btn;
+        var pic = str+' i';
+        var btnx = document.querySelector(str);
+
+        $("#div1").append(btnx);
+        $(str).removeAttr("class","btn btn-success btn-xs");
+        $(str).attr("class","btn btn-info btn-xs");
+        $(str).removeAttr("onclick");
+        $(str).attr("onclick","add(this);");
+        $(pic).removeAttr("class","fa fa-minus-circle");
+        $(pic).attr("class","fa fa-plus-circle");
+
+        notEqual5();
+    }
+
+    function equal5(){
+        var button = document.querySelectorAll('#div2 button');
+        if(button.length==5){
+            $(".btn-info").removeAttr("onclick");
+        }
+    }
+
+    function notEqual5(){
+        var button = document.querySelectorAll('#div2 button');
+        if(button.length!=5){
+            $(".btn-info").removeAttr("onclick");
+            $(".btn-info").attr("onclick","add(this);");
+        }
+    }
 </script>
 </body>
 </html>

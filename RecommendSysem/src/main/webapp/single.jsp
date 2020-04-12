@@ -54,6 +54,10 @@
 		});
 	</script>
 
+	<style>
+        #exit{margin:0 auto;width:72px;}
+    </style>
+	
 </head>
 
 <body>
@@ -77,6 +81,7 @@
 						<!-- jstl方法取出session中的数据 --> 
 						<a href="#" id="username">${sessionScope.user.username }</a>
 					</li>
+					<li><a href="javascript:void(0);" id="exit" onclick="exit();"><i class="fa fa-power-off"></i></a></li>
 				</ul>
 				<input type="hidden" value="${sessionScope.user.id}" id="userId" />
 			</div>
@@ -493,7 +498,13 @@ function toRecommend(){
 	}
 }
 
-
+function exit(){
+	window.location.href="index.jsp";
+	// 清空session域中的用户对象
+	//session.removeAttribute("user"); 
+	// 使session域对象失效
+	session.invalidate();
+}
 
 //获取url上的参数
 function getQueryString(name) {

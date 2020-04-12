@@ -62,6 +62,10 @@
 			});
 		});
 	</script>
+	
+	<style>
+        #exit{margin:0 auto;width:72px;}
+    </style>
 
 </head>
 
@@ -88,6 +92,7 @@
 					<!-- jstl方法取出session中的数据 -->
 					<a href="#" id="username">${sessionScope.user.username }</a>
 				</li>
+				<li><a href="javascript:void(0);" id="exit" onclick="exit();"><i class="fa fa-power-off"></i></a></li>
 			</ul>
 			<input type="hidden" value="${sessionScope.user.id}" id="userId" />
 		</div>
@@ -408,6 +413,13 @@ function build_page_nav(result){
 		window.location.href="single.jsp?mId="+movie.mId;
 	}
 	
+	function exit(){
+		window.location.href="index.jsp";
+		// 清空session域中的用户对象
+		//session.removeAttribute("user"); 
+		// 使session域对象失效
+		session.invalidate();
+	}
 </script>
 </body>
 </html>

@@ -19,12 +19,15 @@ import com.movie.fileOperation.HDFSFileOperation;
 import com.movie.hadoop.StartupRecommend;
 import com.movie.pojo.Movie;
 import com.movie.pojo.MovieTag;
+import com.movie.pojo.MovieTagMessage;
 import com.movie.pojo.RecommendMovie;
 import com.movie.pojo.UserMovie;
+import com.movie.pojo.UserTag;
 import com.movie.service.MovieService;
 import com.movie.service.RecommendMovieService;
 import com.movie.service.TagService;
 import com.movie.service.UserMovieService;
+import com.movie.service.UserTagService;
 import com.movie.utils.JsonUtil;
 import com.movie.utils.ListPagerUtil;
 import com.movie.utils.Message;
@@ -46,6 +49,9 @@ public class RecommendMovieController {
 	@Autowired
 	private UserMovieService userMovieService;
 	
+	@Autowired
+	private UserTagService userTagService;
+	
 	/**
 	 * 获取推荐电影信息列表
 	 * @return
@@ -58,7 +64,6 @@ public class RecommendMovieController {
 
 		// 调用对象集合排序工具类对集合中的推荐评分列进行降序排列
 		SortListUtil.sort(list, "recGrade", SortListUtil.DESC);
-		System.out.println(JsonUtil.objectToJson(list));
 		
 		List<Movie> movieList = new ArrayList<>();
 		
@@ -112,4 +117,49 @@ public class RecommendMovieController {
 		return Message.success().add("message", "刷新推荐结果成功！");
 	
 	}
+	
+	/**
+	 * 当新用户添加了兴趣标签后刷新推荐电影
+	 * @return
+	 */
+	@RequestMapping(value="/newUserRecommend",method=RequestMethod.POST)
+	@ResponseBody
+	public Message newUserRecommend(@RequestParam("uId")Integer uId) {
+		
+		List<UserTag> userTagList = userTagService.getUserTag(uId);
+		
+		List<MovieTag> movieTagList = tagService.getTags();
+		
+		List<Integer> movieTagId = new ArrayList<Integer>();
+		
+		for(int i=0;i<userTagList.size();i++) {
+			for(int j=0;j<movieTagList.size();j++) {
+				if(userTagList.get(i).getUtName().equals(movieTagList.get(j).getMtName())) {
+					movieTagId.add(movieTagList.get(j).getMtId());
+				}
+			}
+		}
+		
+		List<MovieTagMessage> movieTagMessageList = new ArrayList<MovieTagMessage>();
+		// 一个标签id查询到一个电影信息列表，将其合并到一个列表中
+		for(int j=0;j<movieTagId.size();j++) {
+			List<MovieTagMessage> mtmList = userTagService.getMovieTagMessage(movieTagId.get(j));
+			for(int i=0;i<mtmList.size();i++) {
+				movieTagMessageList.add(mtmList.get(i));
+			}
+		}
+		
+		List<Movie> movieList = new ArrayList<Movie>();
+		for(int i=0;i<movieTagMessageList.size();i++) {
+			movieList.add(movieService.getSingle(movieTagMessageList.get(i).getMovId()));
+		}
+		
+		if(movieList.size()>0) {
+			return Message.success().add("movieList", movieList);
+		}else {
+			return Message.failed().add("msg", "还没有该类型的电影，请等待上映！");
+		}
+	
+	}
+	
 }
