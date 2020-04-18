@@ -222,7 +222,7 @@
 		</div>
 		<div class="col-md-5 w3ls_footer_grid1_left">
 			<p>
-				Copyright &copy; 2019.<a
+				Copyright &copy; 2020.<a
 					target="_blank" href="#">localhost:8080/RecommendSystem</a>
 			</p>
 		</div>

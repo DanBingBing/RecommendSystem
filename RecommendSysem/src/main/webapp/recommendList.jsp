@@ -234,58 +234,8 @@
 		
 	</div>
 </div>
+<!-- //w3l-medile-movies-grids -->
 
-<!-- //banner -->
-<!-- banner-bottom -->
-<div class="banner-bottom">
-	<h4 class="latest-text">推荐电影</h4>
-	<div class="container">
-		<div class="w3_agile_banner_bottom_grid">
-			<div id="owl-demo" class="owl-carousel owl-theme">
-
-				<div class="item" v-for="i in movies">
-					<div class="w3l-movie-gride-agile w3l-movie-gride-agile1">
-						<a href="javascript:;" v-on:click="play_video(i)" class="hvr-shutter-out-horizontal"><img
-								v-bind:src="i.mPoster" v-bind:title="i.mName"
-								class="img-responsive" alt=" " />
-							<div class="w3l-action-icon">
-								<i class="fa fa-play-circle" aria-hidden="true"></i>
-							</div> </a>
-						<div class="mid-1 agileits_w3layouts_mid_1_home">
-							<div class="w3l-movie-text">
-								<h6>
-									<a href="javascript:;" v-on:click="play_video(i)" v-bind:title="i.mName" class="set-font-size">{{i.mName}}</a>
-								</h6>
-							</div>
-							<div class="mid-2 agile_mid_2_home">
-								<p>{{i.mYear}}</p>
-								<div class="block-stars">
-									<ul class="w3l-ratings">
-										<li><a href="#"><i class="fa fa-star"
-														   aria-hidden="true"></i></a></li>
-										<li><a href="#"><i class="fa fa-star"
-														   aria-hidden="true"></i></a></li>
-										<li><a href="#"><i class="fa fa-star"
-														   aria-hidden="true"></i></a></li>
-										<li><a href="#"><i class="fa fa-star"
-														   aria-hidden="true"></i></a></li>
-										<li><a href="#"><i class="fa fa-star-half-o"
-														   aria-hidden="true"></i></a></li>
-									</ul>
-								</div>
-								<div class="clearfix"></div>
-							</div>
-						</div>
-
-					</div>
-				</div>
-
-			</div>
-		</div>
-	</div>
-</div>
-
-<!-- //Latest-tv-series -->
 <!-- footer -->
 <div class="footer">
 	<div class="container">
@@ -310,7 +260,7 @@
 		</div>
 		<div class="col-md-5 w3ls_footer_grid1_left">
 			<p>
-				Copyright &copy; 2019.<a
+				Copyright &copy; 2020.<a
 					target="_blank" href="#">localhost:8080/RecommendSystem</a>
 			</p>
 		</div>
@@ -371,13 +321,6 @@ var v = new Vue({
 	}
 });
 
-//2.使用vue解析json并渲染电影数据到轮播导航栏
-var v1 = new Vue({
-	el: '#owl-demo',
-	data: {
-		movies: []
-	}
-});
 
 function to_page(pn){
 	var result;
@@ -417,8 +360,6 @@ function to_page(pn){
 function build_movie_table(result){
 	
 	v.rows = result.extend.movieList.pageList;
-	
-	v1.movies = result.extend.movieList.pageList;
 	
 }
 

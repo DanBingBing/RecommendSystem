@@ -125,7 +125,7 @@
                                            placeholder="用户名" required=""> <input type="password"
                                                id="password" name="password" placeholder="密码" required="">
                                     <!-- <input type="submit" value="登录"> -->
-                                    <input type="button" value="登录" onclick="loginCheck()">
+                                    <input type="button" value="登录" id="login" onclick="loginCheck()">
                                 </form>
                             </div>
 
@@ -139,7 +139,7 @@
                                     <input type="password" id="password1" name="password"
                                           placeholder="密码" required="">
                                     <!-- <input type="submit" value="注册"> -->
-                                    <input type="button" value="注册" onclick="registerCheck()">
+                                    <input type="button" value="注册" id="register" onclick="registerCheck()">
                                 </form>
                             </div>
                             <div id="message" class="message"></div>
@@ -167,8 +167,8 @@
         }, "slow");
     });
 </script>
-
 <!-- //bootstrap-pop-up -->
+
 <!-- nav -->
 <div class="movies_nav">
     <div class="container">
@@ -194,56 +194,9 @@
         </nav>
     </div>
 </div>
+<!-- //nav -->
 
-<!-- //banner -->
 <!-- banner-bottom -->
-<div class="banner-bottom">
-    <h4 class="latest-text">推荐电影</h4>
-    <div class="container">
-        <div class="w3_agile_banner_bottom_grid" id="run">
-            <div id="owl-demo" class="owl-carousel owl-theme">
-
-                <div class="item" v-for="i in movies">
-                    <div class="w3l-movie-gride-agile w3l-movie-gride-agile1">
-                        <a href="javascript:;" v-on:click="play_video(i)" class="hvr-shutter-out-horizontal"><img
-                                v-bind:src="i.mPoster" v-bind:title="i.mName"
-                                class="img-responsive" alt=" " />
-                            <div class="w3l-action-icon">
-                                <i class="fa fa-play-circle" aria-hidden="true"></i>
-                            </div> 
-                        </a>
-                        <div class="mid-1 agileits_w3layouts_mid_1_home">
-                            <div class="w3l-movie-text">
-                                <h6>
-                                    <a href="javascript:;" v-on:click="play_video(i)" v-bind:title="i.mName" class="set-font-size">{{i.mName}}</a>
-                                </h6>
-                            </div>
-                            <div class="mid-2 agile_mid_2_home">
-                                <p>{{i.mYear}}</p>
-                                <div class="block-stars">
-                                    <ul class="w3l-ratings">
-                                        <li><a href="#"><i class="fa fa-star"
-                                                           aria-hidden="true"></i></a></li>
-                                        <li><a href="#"><i class="fa fa-star"
-                                                           aria-hidden="true"></i></a></li>
-                                        <li><a href="#"><i class="fa fa-star"
-                                                           aria-hidden="true"></i></a></li>
-                                        <li><a href="#"><i class="fa fa-star"
-                                                           aria-hidden="true"></i></a></li>
-                                        <li><a href="#"><i class="fa fa-star-half-o"
-                                                           aria-hidden="true"></i></a></li>
-                                    </ul>
-                                </div>
-                                <div class="clearfix"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-            </div>
-        </div>
-    </div>
-</div>
 
 <!-- /w3l-medile-movies-grids -->
 <div class="general-agileits-w3l">
@@ -343,7 +296,7 @@
         </div>
         <div class="col-md-5 w3ls_footer_grid1_left">
             <p>
-                Copyright &copy; 2019.
+                Copyright &copy; 2020.
                 <a target="_blank" href="#">localhost:8080/RecommendSystem</a>
             </p>
         </div>
@@ -400,26 +353,6 @@ var v = new Vue({
 	}
 });
 
-//2.使用vue解析json并渲染电影数据到轮播导航栏
-var v1 = new Vue({
-	el: '#run',
-	data: {
-		movies:[]
-	}
-});
-
-//轮播区动态效果
-$("#owl-demo").owlCarousel({
-
-	// 每隔3秒自动切换
-	autoPlay: 3000,
-
-	items : 5,
-	itemsDesktop : [640,4],
-	itemsDesktopSmall : [414,3]
-
-});
-
 function to_page(pn){
 	
 	$.ajax({
@@ -449,8 +382,6 @@ function to_page(pn){
 
 function build_movie_table(result){
 	v.rows = result.extend.movieList.list;
-	
-	v1.movies = result.extend.movieList.list;
 	
 }
 
@@ -638,7 +569,7 @@ function build_page_nav(result){
                                 // 清空之前的显示的信息
                                 $("#message").empty();
                                 $("#message").append($("<h5></h5>")
-                                        .append(result.extend.msg+",欢迎登录！"))
+                                        .append(result.extend.msg+"欢迎登录！"))
                                         .attr("style","color:green;");
                                 // 关闭当前注册窗口
                                 $("#form2").attr("style","display: none;");
@@ -687,6 +618,17 @@ function build_page_nav(result){
 	function play_video(movie){
 		window.location.href="single.jsp?mId="+movie.mId;
 	}
+	
+	$('body').keydown(function () {
+        if(event.keyCode == '13'){
+        	if($("#form1").attr("style")=="display: block;"){
+        		$("#login").click();//调用登录按钮的登录事件
+        	}else if($("#form2").attr("style")=="display: block;"){
+        		$("#register").click();//调用注册按钮的登录事件
+        	}
+        	
+        }
+	});
 </script>
 
 </body>
