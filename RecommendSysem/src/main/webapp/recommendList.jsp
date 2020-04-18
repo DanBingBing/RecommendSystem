@@ -636,7 +636,7 @@ function newUserRecommend(){
         if($.trim($('#username').text())!=""){
             var uId = $('#userId').val();
             
-            /* $.ajax({
+            $.ajax({
             	type : "post",
             	url : "${PROJECT_PATH }/userTag/addUserTag",
             	dataType : "json",//接收服务端返回的数据类型
@@ -656,7 +656,7 @@ function newUserRecommend(){
                 	console.log("服务端出现异常！");
                 	//window.location.href="500.jsp";
             	}
-        	}); */
+        	});
             
             if(btnx.length!=0){
             	// 新用户推荐列表
