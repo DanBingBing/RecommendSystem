@@ -26,7 +26,6 @@ public class HDFSFileOperation {
 		InputStream in = new BufferedInputStream(new FileInputStream(localSrc));
 		// 连接 HDFS 文件系统
 		Configuration conf = new Configuration();
-		
 		FileSystem fs = FileSystem.get(URI.create(dst), conf);
 		FSDataOutputStream out = fs.create(new Path(dst));
 		IOUtils.copyBytes(in, out, 4096, true);
@@ -54,11 +53,11 @@ public class HDFSFileOperation {
 		// delete 方法的第一个参数表示上传文件的路径,的第二个参数表示是否递归删除,遇到删除文件夹时设为 true
 		Boolean flag = fs.delete(new Path(path+filename), true);
 		if (flag) {
-			System.out.println(filename +"删除成功!");
+			System.out.println(filename +"文件删除成功!");
 		} else {
-			System.out.println(filename +"删除失败!");
+			System.out.println(filename +"文件删除失败!");
 		}
 		
-	}	
-
+	}
+	
 }

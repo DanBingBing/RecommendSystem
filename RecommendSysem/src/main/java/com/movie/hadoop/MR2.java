@@ -18,22 +18,22 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
  * item user (评分矩阵) X item profile（已转置）
  */
 public class MR2 extends TextOutputFormat {
-	private static String inputPath = "/context/step2_input";
-	private static String outputPath = "/context/step2_output";
+	//private static String inputPath = "/context/step2_input/";
+	//private static String outputPath = "/context/step2_output";
 	// 将step1中输出的转置矩阵作为全局缓存
-	private static String cache;
+	//private static String cache;
 
-	private static String hdfs = "hdfs://127.0.0.1:9000";
+	//private static String hdfs = "hdfs://127.0.0.1:9000";
 	
 	// 重写输出文件命名方法
 	protected static void setPutputName(JobContext job,String name) {
 		job.getConfiguration().set(BASE_OUTPUT_NAME, name);
 	}
 
-	public int run(String resultFilename) {
+	public int run(Integer uId, String hdfsUrl, String inputPath, String resultFilePath, String resultFilename, String cachePath) {
 		try {
 			Configuration conf = new Configuration();
-			conf.set("fs.defaultFS", hdfs);
+			conf.set("fs.defaultFS", hdfsUrl);
 			Job job = Job.getInstance(conf, "step2");
 			// 如果未开启,使用 FileSystem.enableSymlinks()方法来开启符号连接。
 			FileSystem.enableSymlinks();
@@ -41,7 +41,7 @@ public class MR2 extends TextOutputFormat {
 			boolean areSymlinksEnabled = FileSystem.areSymlinksEnabled();
 			System.out.println(areSymlinksEnabled);
 			// 添加分布式缓存文件
-			job.addCacheArchive(new URI(cache + "#itemUserScore1"));
+			job.addCacheArchive(new URI(cachePath + "#itemUserScore1"));
 
 			// 配置任务map和reduce类
 			job.setJarByClass(MR2.class);
@@ -58,7 +58,7 @@ public class MR2 extends TextOutputFormat {
 			job.setOutputValueClass(Text.class);
 
 			FileSystem fs = FileSystem.get(conf);
-			Path inpath = new Path(inputPath);
+			Path inpath = new Path(inputPath+"/"+"ItemUser_"+uId+".txt");
 			if (fs.exists(inpath)) {
 				FileInputFormat.addInputPath(job, inpath);
 			} else {
@@ -66,7 +66,7 @@ public class MR2 extends TextOutputFormat {
 				System.out.println("不存在");
 			}
 
-			Path outpath = new Path(outputPath);
+			Path outpath = new Path(resultFilePath);
 			fs.delete(outpath, true);
 			FileOutputFormat.setOutputPath(job, outpath);
 
@@ -81,12 +81,12 @@ public class MR2 extends TextOutputFormat {
 		return -1;
 	}
 
-	public static void step2(String resultFilename,String cacheName) throws IOException, ClassNotFoundException, InterruptedException {
+	public static void step2(Integer uId, String hdfsUrl, String inputPath, String resultFilePath, String resultFilename,String cachePath) throws IOException, ClassNotFoundException, InterruptedException {
 		// 先为step1中生成的全局缓存文件命名赋值给变量，方便读取使用
-		cache = "/context/step1_output/"+cacheName;
+		//cache = "/context/step1_output/"+cacheName;
 		
 		int result = -1;
-		result = new MR2().run(resultFilename);
+		result = new MR2().run(uId,hdfsUrl,inputPath,resultFilePath,resultFilename,cachePath);
 		if (result == 1) {
 			System.out.println("step2运行成功");
 		} else if (result == -1) {

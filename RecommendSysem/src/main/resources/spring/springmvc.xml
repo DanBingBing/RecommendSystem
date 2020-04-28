@@ -44,10 +44,16 @@
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <!--拼接视图地址的前缀和后缀-->
         <!-- <property name="prefix" value="/WEB-INF/jsp/"/> -->
-        <!-- 由于引入的静态资源文件里的代码又引入其他资源是的路劲是绝对路径，不想在修改，这里就要保证路径的统一 -->
+        <!-- 由于引入的静态资源文件里的代码又引入其他资源的是路径是绝对路径，不想再修改，这里就要保证路径的统一 -->
         <property name="prefix" value="/"/>
         <property name="suffix" value=".jsp"/>
     </bean>
+    
+    <!--@Contolller中获取properties文件属性值配置-->
+    <bean id="placeholderConfig" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">  
+        <property name="fileEncoding" value="UTF-8" />  
+        <property name="location" value="classpath:properties/hadoopUrl.properties" />  
+	</bean>
     
     <!-- 配置定时器（采用注解方式定时启动某个方法） -->
     <task:executor id="executor" pool-size="5" />    

@@ -418,7 +418,7 @@ function grade(){
 	                $("#message").empty();
 	                $("#message").append(result.extend.msg).attr("style","color:green;");
 	                // 评分成功后刷新该页面，去掉确定按钮、防止用户多次点击该按钮，多次发送推荐请求，增加服务器压力
-	                window.location.href="${PROJECT_PATH }/single.jsp"; 
+	                window.location.href="${PROJECT_PATH }/single.jsp?mId="+mId; 
 	                
 	                // 评分成功后刷新用户的推荐电影信息
 	     			refreshRecommend();

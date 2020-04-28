@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,6 +52,24 @@ public class RecommendMovieController {
 	
 	@Autowired
 	private UserTagService userTagService;
+	
+	@Value("${HADOOP_URL}")
+	private String HADOOP_URL;
+	
+	@Value("${STEP1_INPUT_PATH}")
+	private String STEP1_INPUT_PATH;
+	
+	@Value("${STEP2_INPUT_PATH}")
+	private String STEP2_INPUT_PATH;
+	
+	@Value("${STEP1_OUTPUT_PATH}")
+	private String STEP1_OUTPUT_PATH;
+	
+	@Value("${STEP2_OUTPUT_PATH}")
+	private String STEP2_OUTPUT_PATH;
+	
+	@Value("${STEP3_OUTPUT_PATH}")
+	private String STEP3_OUTPUT_PATH;
 	
 	/**
 	 * 获取推荐电影信息列表
@@ -101,7 +120,7 @@ public class RecommendMovieController {
 		CreateUserInputFiles.getUserGrade(userMovies, uId);
 		
 		// 上传电影特征文件、用户评分文件到HDFS,启动推荐，生成推荐结果文件并下载到系统中
-		StartupRecommend.startupRecommend("ItemProfile_"+uId+".txt", "ItemUser_"+uId+".txt", "RecommendResult_"+uId);
+		StartupRecommend.startupRecommend(uId, HADOOP_URL, STEP1_INPUT_PATH, STEP2_INPUT_PATH, STEP1_OUTPUT_PATH, STEP2_OUTPUT_PATH, STEP3_OUTPUT_PATH);
 		
 		// 从数据库中删除用户旧的推荐信息
 		recommendMovieService.deleteAllRecommendMovieByUserId(uId);
