@@ -49,7 +49,7 @@ public class MR1 extends TextOutputFormat{
 			job.setOutputValueClass(Text.class);
 
 			FileSystem fs = FileSystem.get(conf);
-			Path inpath = new Path(inputPath+"/"+"ItemProfile_"+uId+".txt");
+			Path inpath = new Path(inputPath+"ItemProfile_"+uId+".txt");
 			if (fs.exists(inpath)) {
 				FileInputFormat.addInputPath(job, inpath);
 				System.out.println("文件读取成功！");

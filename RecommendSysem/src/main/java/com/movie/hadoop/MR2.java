@@ -58,7 +58,7 @@ public class MR2 extends TextOutputFormat {
 			job.setOutputValueClass(Text.class);
 
 			FileSystem fs = FileSystem.get(conf);
-			Path inpath = new Path(inputPath+"/"+"ItemUser_"+uId+".txt");
+			Path inpath = new Path(inputPath+"ItemUser_"+uId+".txt");
 			if (fs.exists(inpath)) {
 				FileInputFormat.addInputPath(job, inpath);
 			} else {

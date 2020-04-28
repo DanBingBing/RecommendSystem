@@ -60,7 +60,7 @@ public class MR3 extends TextOutputFormat{
 			FileSystem fs = FileSystem.get(conf);
 			
 			// 先构建一个路径
-			Path inpath = new Path(inputPath+"/"+"ItemProfile_"+uId+".txt");
+			Path inpath = new Path(inputPath+"ItemProfile_"+uId+".txt");
 			
 			if (fs.exists(inpath)) {
 				FileInputFormat.addInputPath(job, inpath);
