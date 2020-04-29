@@ -139,7 +139,7 @@
 								<div data-video="" id="video" class="video-img">
 									<a href="javascript:;" v-on:click="playVideo()"
 										class="hvr-shutter-out-horizontal"> <img
-										src="${PROJECT_PATH }/images/5.jpg" alt=""
+										src="${PROJECT_PATH }/images/single_movie.png" alt=""
 										class="img-responsive" title="点击播放" />
 										<div class="w3l-action-icon">
 											<i class="fa fa-play-circle" aria-hidden="true"></i>
@@ -166,15 +166,15 @@
 
 						<div class="all-comments">
 							<div class="all-comments-info" id="showGrade">
-								<h3>请为该电影评分</h3>
+								<h3>评分</h3>
 								<div class="agile-info-wthree-box">
 									<form action="" id="gradeForm">
 										<div class="col-sm-4">
 											<!-- 下拉列表 -->
 											<select class="form-control" name="mov_grade">
-												<option>5</option>
-												<option>4</option>
 												<option>3</option>
+												<option>4</option>
+												<option>5</option>
 												<option>2</option>
 												<option>1</option>
 											</select>
@@ -189,6 +189,26 @@
 							</div>
 
 						</div>
+						
+						<div class="all-comments">
+							<div class="all-comments-info" id="showEvaluate">
+								<h3>评价</h3>
+								<div class="agile-info-wthree-box">
+									<form action="" id="evaluateForm">
+										<div class="col-sm-4">
+											<textarea placeholder="评价内容" required=""></textarea>
+										</div>
+										<br/>
+										<input type="button" id="evaluateButton" value="确定">
+										<div class="clearfix"></div>
+									</form>
+									<h4 id="evaluateMessage"></h4>
+								</div>
+							</div>
+
+						</div>
+						
+						
 					</div>
 				</div>
 				<div class="col-md-4 single-right">

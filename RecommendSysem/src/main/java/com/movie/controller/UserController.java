@@ -1,7 +1,9 @@
 package com.movie.controller;
 
+import java.util.Enumeration;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,12 +46,14 @@ public class UserController {
 	@RequestMapping(value="/loginCheck",method=RequestMethod.POST)
 	public Message checkLogin(User user,HttpSession session) {
 		
-		List<User> userList = userService.findUsername(user.getUsername());
+		List<User> realUser = userService.findUsername(user.getUsername());
 		
-		if(userList.size()==1){
-			if(userList.get(0).getPassword().equals(user.getPassword())){
+		if(realUser.size()==1){
+			if(realUser.get(0).getPassword().equals(user.getPassword())){
+				// 先清空密码，防止泄露
+				realUser.get(0).setPassword(null);
 				// 在session域中保存用户信息
-				session.setAttribute("user", userList.get(0));
+				session.setAttribute("user", realUser.get(0));
 				return Message.success().add("msg", "正在登录...");
 			}else{
 				return Message.failed().add("msg", "用户名或密码错误！");
@@ -109,4 +113,22 @@ public class UserController {
 		return Message.success().add("msg", "注册成功！");
 		
 	}
+	
+	/**
+	 * 用户信息注册
+	 * @param User
+	 * @return String
+	 */
+	@ResponseBody
+	@RequestMapping(value="/exit",method=RequestMethod.POST)
+	public Message exitSystem(HttpServletRequest request) {
+		
+		 HttpSession session = request.getSession();
+		 // 清除session域中的user对象
+	    session.removeAttribute("user");
+		
+		return Message.success().add("msg", "已安全退出系统！");
+		
+	}
+	
 }

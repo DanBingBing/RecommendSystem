@@ -463,11 +463,31 @@ function build_page_nav(result){
 	}
 	
 	function exit(){
-		window.location.href="index.jsp";
-		// 清空session域中的用户对象
-		session.removeAttribute("user"); 
-		// 使session域对象失效
-		//session.invalidate();
+		
+		if($.trim($('#userId').val())!=""){
+			var uId = $('#userId').val();
+			
+			// 刷新用户的推荐电影信息
+			$.ajax({
+				type : "post",
+				url : "${PROJECT_PATH }/user/exit",
+				dataType : "json",//接收服务端返回的数据类型
+				//data : {"uId":uId},
+				success : function(result) {
+					console.log(result);//打印服务端返回的数据
+					if(result.code==200){
+						// 在后台清空session中的user对象
+						window.location.href="index.jsp";
+						
+					}
+				},
+				error : function() {
+					console.log("服务端出现异常！");
+					//window.location.href="500.jsp";
+				}
+			});
+			
+		}
 		
 	}
 </script>
