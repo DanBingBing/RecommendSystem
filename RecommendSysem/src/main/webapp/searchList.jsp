@@ -404,8 +404,8 @@
 	}
 	
 	// 通过 v-on:click 绑定的方法可在<script>中直接实现，也可在vue的methods中实现
-	function play_video(mId){
-		window.location.href="single.jsp?mId="+mId;
+	function play_video(movie){
+		window.location.href="single.jsp?mId="+movie.mId;
 	}
 	
 	function exit(){
